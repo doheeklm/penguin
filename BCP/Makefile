@@ -11,8 +11,10 @@ t = client
 #TARGET:: main
 
 o = BCP_Main.c \
+	BCP_Util.c \
 	BCP_Sock.c \
-	BCP_EncDec.
+	BCP_EncDec.c \
+	BCP_Task.c \
 #OBJECTS:: shm_rcv.c
 
 all : $(t) #타겟 파일이 여러 개일때

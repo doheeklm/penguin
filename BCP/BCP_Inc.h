@@ -13,9 +13,14 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <stdio_ext.h>
 
 #include "BCP_Macro.h"
+#include "BCP_Errmsg.h"
+#include "BCP_Util.h"
 #include "BCP_Sock.h"
+#include "BCP_EncDec.h"
+#include "BCP_Task.h"
 
 typedef struct
 {

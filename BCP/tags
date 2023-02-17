@@ -1,0 +1,137 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BCP_COMPANY_LEN	BCP_EncDec.h	8;"	d
+BCP_EC_DUPLICATE_LOGIN	BCP_EncDec.h	/^	BCP_EC_DUPLICATE_LOGIN		= 0x08,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_EMPTY_INFO	BCP_EncDec.h	/^	BCP_EC_EMPTY_INFO			= 0x05,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_FULL_INFO	BCP_EncDec.h	/^	BCP_EC_FULL_INFO			= 0x04,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_INFO_NOT_EXIST	BCP_EncDec.h	/^	BCP_EC_INFO_NOT_EXIST		= 0x06,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_INVALID_SESSION_ID	BCP_EncDec.h	/^	BCP_EC_INVALID_SESSION_ID	= 0x03,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_MISSING_FIELD	BCP_EncDec.h	/^	BCP_EC_MISSING_FIELD		= 0x09,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_SYSTEM_FAIL	BCP_EncDec.h	/^	BCP_EC_SYSTEM_FAIL			= 0x07,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_UNDEFINED_ERR	BCP_EncDec.h	/^	BCP_EC_UNDEFINED_ERR		= 0x0A$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_USER_NOT_EXIST	BCP_EncDec.h	/^	BCP_EC_USER_NOT_EXIST		= 0x01,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EC_WRONG_PASSWORD	BCP_EncDec.h	/^	BCP_EC_WRONG_PASSWORD		= 0x02,$/;"	e	enum:_BCP_ErrCode_e
+BCP_EMAIL_LEN	BCP_EncDec.h	12;"	d
+BCP_Env_t	BCP_Inc.h	/^} BCP_Env_t;$/;"	t	typeref:struct:__anon1
+BCP_ErrCode_e	BCP_EncDec.h	/^} BCP_ErrCode_e;$/;"	t	typeref:enum:_BCP_ErrCode_e
+BCP_Header_t	BCP_EncDec.h	/^} BCP_Header_t;$/;"	t	typeref:struct:_BCP_Header_s
+BCP_LOGIN_ID_LEN	BCP_EncDec.h	5;"	d
+BCP_LOGIN_PW_LEN	BCP_EncDec.h	6;"	d
+BCP_LoginReqData_t	BCP_EncDec.h	/^} BCP_LoginReqData_t;$/;"	t	typeref:struct:_BCP_LoginReqData_s
+BCP_MOBILE_LEN	BCP_EncDec.h	9;"	d
+BCP_MsgType_e	BCP_EncDec.h	/^} BCP_MsgType_e;$/;"	t	typeref:enum:_BCP_MsgType_e
+BCP_NAME_LEN	BCP_EncDec.h	7;"	d
+BCP_P_Assistant	BCP_EncDec.h	/^	BCP_P_Assistant				= 0x06,$/;"	e	enum:_BCP_Position_e
+BCP_P_AssistantManager	BCP_EncDec.h	/^	BCP_P_AssistantManager		= 0x02,$/;"	e	enum:_BCP_Position_e
+BCP_P_CEO	BCP_EncDec.h	/^	BCP_P_CEO					= 0x0D,$/;"	e	enum:_BCP_Position_e
+BCP_P_Chairman	BCP_EncDec.h	/^	BCP_P_Chairman				= 0x0E$/;"	e	enum:_BCP_Position_e
+BCP_P_DeputyGeneralManager	BCP_EncDec.h	/^	BCP_P_DeputyGeneralManager	= 0x04,$/;"	e	enum:_BCP_Position_e
+BCP_P_Director	BCP_EncDec.h	/^	BCP_P_Director				= 0x0A,$/;"	e	enum:_BCP_Position_e
+BCP_P_Employee	BCP_EncDec.h	/^	BCP_P_Employee				= 0x01,$/;"	e	enum:_BCP_Position_e
+BCP_P_GeneralManager	BCP_EncDec.h	/^	BCP_P_GeneralManager		= 0x05,$/;"	e	enum:_BCP_Position_e
+BCP_P_Junior	BCP_EncDec.h	/^	BCP_P_Junior				= 0x07,$/;"	e	enum:_BCP_Position_e
+BCP_P_Manager	BCP_EncDec.h	/^	BCP_P_Manager				= 0x03,$/;"	e	enum:_BCP_Position_e
+BCP_P_ManagingDirector	BCP_EncDec.h	/^	BCP_P_ManagingDirector		= 0x0B,$/;"	e	enum:_BCP_Position_e
+BCP_P_Principal	BCP_EncDec.h	/^	BCP_P_Principal				= 0x09,$/;"	e	enum:_BCP_Position_e
+BCP_P_Senior	BCP_EncDec.h	/^	BCP_P_Senior				= 0x08,$/;"	e	enum:_BCP_Position_e
+BCP_P_SeniorManagingDirector	BCP_EncDec.h	/^	BCP_P_SeniorManagingDirector= 0x0C,$/;"	e	enum:_BCP_Position_e
+BCP_Position_e	BCP_EncDec.h	/^} BCP_Position_e;$/;"	t	typeref:enum:_BCP_Position_e
+BCP_RC_SUCC	BCP_EncDec.h	/^	BCP_RC_SUCC					= 0x00,$/;"	e	enum:_BCP_ReturnCode_e
+BCP_ReqMsg_t	BCP_EncDec.h	/^} BCP_ReqMsg_t;$/;"	t	typeref:struct:_BCP_ReqMsg_s
+BCP_ReturnCode_e	BCP_EncDec.h	/^} BCP_ReturnCode_e;$/;"	t	typeref:enum:_BCP_ReturnCode_e
+BCP_TAG_BC_CNT	BCP_EncDec.h	/^	BCP_TAG_BC_CNT				= 0x21,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_BC_ID	BCP_EncDec.h	/^	BCP_TAG_BC_ID				= 0x10,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_BC_TOTAL	BCP_EncDec.h	/^	BCP_TAG_BC_TOTAL			= 0x20,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_COMPANY	BCP_EncDec.h	/^	BCP_TAG_COMPANY				= 0x12,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_EMAIL	BCP_EncDec.h	/^	BCP_TAG_EMAIL				= 0x18,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_ERR_CODE	BCP_EncDec.h	/^	BCP_TAG_ERR_CODE			= 0x31$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_LOGIN_ID	BCP_EncDec.h	/^	BCP_TAG_LOGIN_ID			= 0x01,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_LOGIN_PW	BCP_EncDec.h	/^	BCP_TAG_LOGIN_PW			= 0x02,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_MOBILE	BCP_EncDec.h	/^	BCP_TAG_MOBILE				= 0x13,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_NAME	BCP_EncDec.h	/^	BCP_TAG_NAME				= 0x11,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_POSITION	BCP_EncDec.h	/^	BCP_TAG_POSITION			= 0x16,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_RESULT_CODE	BCP_EncDec.h	/^	BCP_TAG_RESULT_CODE			= 0x30,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_SESSION_ID	BCP_EncDec.h	/^	BCP_TAG_SESSION_ID			= 0x03,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_TEAM	BCP_EncDec.h	/^	BCP_TAG_TEAM				= 0x15,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_TEL	BCP_EncDec.h	/^	BCP_TAG_TEL					= 0x14,$/;"	e	enum:_BCP_Tag_e
+BCP_TAG_TITLE	BCP_EncDec.h	/^	BCP_TAG_TITLE				= 0x17,$/;"	e	enum:_BCP_Tag_e
+BCP_TEAM_LEN	BCP_EncDec.h	11;"	d
+BCP_TEL_LEN	BCP_EncDec.h	10;"	d
+BCP_TLV_t	BCP_EncDec.h	/^} BCP_TLV_t;$/;"	t	typeref:struct:_BCP_TLV_s
+BCP_T_CEO	BCP_EncDec.h	/^	BCP_T_CEO					= 0x09$/;"	e	enum:_BCP_Title_e
+BCP_T_CTO	BCP_EncDec.h	/^	BCP_T_CTO					= 0x08,$/;"	e	enum:_BCP_Title_e
+BCP_T_ChiefOfStaff	BCP_EncDec.h	/^	BCP_T_ChiefOfStaff			= 0x02,$/;"	e	enum:_BCP_Title_e
+BCP_T_Director	BCP_EncDec.h	/^	BCP_T_Director				= 0x05,$/;"	e	enum:_BCP_Title_e
+BCP_T_GroupLeader	BCP_EncDec.h	/^	BCP_T_GroupLeader			= 0x06,$/;"	e	enum:_BCP_Title_e
+BCP_T_HeadOfDepartment	BCP_EncDec.h	/^	BCP_T_HeadOfDepartment		= 0x03,$/;"	e	enum:_BCP_Title_e
+BCP_T_HeadOfDevision	BCP_EncDec.h	/^	BCP_T_HeadOfDevision		= 0x04,$/;"	e	enum:_BCP_Title_e
+BCP_T_ManagerOfDepartment	BCP_EncDec.h	/^	BCP_T_ManagerOfDepartment	= 0x07,$/;"	e	enum:_BCP_Title_e
+BCP_T_Staff	BCP_EncDec.h	/^	BCP_T_Staff					= 0x01,$/;"	e	enum:_BCP_Title_e
+BCP_Tag_e	BCP_EncDec.h	/^} BCP_Tag_e;$/;"	t	typeref:enum:_BCP_Tag_e
+BCP_Title_e	BCP_EncDec.h	/^} BCP_Title_e;$/;"	t	typeref:enum:_BCP_Title_e
+BCP_rErrFail	BCP_Errmsg.h	/^	BCP_rErrFail,$/;"	e	enum:__anon2
+BCP_rErrInvalidParam	BCP_Errmsg.h	/^	BCP_rErrInvalidParam,$/;"	e	enum:__anon2
+BCP_rErrSocketInit	BCP_Errmsg.h	/^	BCP_rErrSocketInit,$/;"	e	enum:__anon2
+BCP_rExitProgram	BCP_Errmsg.h	/^	BCP_rExitProgram$/;"	e	enum:__anon2
+BCP_rOk	BCP_Errmsg.h	/^	BCP_rOk = 1000,$/;"	e	enum:__anon2
+BPC_RC_FAIL	BCP_EncDec.h	/^	BPC_RC_FAIL					= 0x01$/;"	e	enum:_BCP_ReturnCode_e
+CC	Makefile	/^CC = gcc -DDEBUG #컴파일러$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -W -Wall -g #컴파일 옵션 세팅$/;"	m
+CHECK_PARAM	BCP_Macro.h	5;"	d
+CHECK_PARAM_RC	BCP_Macro.h	14;"	d
+CREATE_REQ	BCP_EncDec.h	/^	CREATE_REQ					= 0x02,$/;"	e	enum:_BCP_MsgType_e
+CREATE_RES	BCP_EncDec.h	/^	CREATE_RES					= 0x12,$/;"	e	enum:_BCP_MsgType_e
+ClearStdin	BCP_Util.c	/^void ClearStdin( char *pStr )$/;"	f
+DELETE_REQ	BCP_EncDec.h	/^	DELETE_REQ					= 0x04,$/;"	e	enum:_BCP_MsgType_e
+DELETE_RES	BCP_EncDec.h	/^	DELETE_RES					= 0x14,$/;"	e	enum:_BCP_MsgType_e
+ENCDEC_EncodingHeader	BCP_EncDec.c	/^int ENCDEC_EncodingHeader( unsigned char *pucBuf, int nBufLen, BCP_Header_t *ptHeader )$/;"	f
+FD_CLOSE	BCP_Macro.h	16;"	d
+LOGIN_REQ	BCP_EncDec.h	/^	LOGIN_REQ					= 0x01,$/;"	e	enum:_BCP_MsgType_e
+LOGIN_RES	BCP_EncDec.h	/^	LOGIN_RES					= 0x11,$/;"	e	enum:_BCP_MsgType_e
+LOGOUT_REQ	BCP_EncDec.h	/^	LOGOUT_REQ					= 0x05,$/;"	e	enum:_BCP_MsgType_e
+LOGOUT_RES	BCP_EncDec.h	/^	LOGOUT_RES					= 0x15$/;"	e	enum:_BCP_MsgType_e
+ReturnCode_e	BCP_Errmsg.h	/^} ReturnCode_e;$/;"	t	typeref:enum:__anon2
+SEARCH_REQ	BCP_EncDec.h	/^	SEARCH_REQ					= 0x03,$/;"	e	enum:_BCP_MsgType_e
+SEARCH_RES	BCP_EncDec.h	/^	SEARCH_RES					= 0x13,$/;"	e	enum:_BCP_MsgType_e
+SOCK_Init	BCP_Sock.c	/^int SOCK_Init()$/;"	f
+SOCK_Write	BCP_Sock.c	/^int SOCK_Write( void *pvData )$/;"	f
+SignalHandler	BCP_Main.c	/^void SignalHandler( int nSigno )$/;"	f
+TASK_Login	BCP_Task.c	/^int TASK_Login()$/;"	f
+_BCP_ENCDEC_H_	BCP_EncDec.h	3;"	d
+_BCP_ERR_H_	BCP_Errmsg.h	3;"	d
+_BCP_ErrCode_e	BCP_EncDec.h	/^typedef enum _BCP_ErrCode_e$/;"	g
+_BCP_Header_s	BCP_EncDec.h	/^typedef struct _BCP_Header_s$/;"	s
+_BCP_INC_H_	BCP_Inc.h	3;"	d
+_BCP_LoginReqData_s	BCP_EncDec.h	/^typedef struct _BCP_LoginReqData_s$/;"	s
+_BCP_MACRO_H_	BCP_Macro.h	3;"	d
+_BCP_MsgType_e	BCP_EncDec.h	/^typedef enum _BCP_MsgType_e$/;"	g
+_BCP_Position_e	BCP_EncDec.h	/^typedef enum _BCP_Position_e$/;"	g
+_BCP_ReqMsg_s	BCP_EncDec.h	/^typedef struct _BCP_ReqMsg_s$/;"	s
+_BCP_ReturnCode_e	BCP_EncDec.h	/^typedef enum _BCP_ReturnCode_e$/;"	g
+_BCP_SOCK_H_	BCP_Sock.h	3;"	d
+_BCP_TASK_H_	BCP_Task.h	3;"	d
+_BCP_TLV_s	BCP_EncDec.h	/^typedef struct _BCP_TLV_s$/;"	s
+_BCP_Tag_e	BCP_EncDec.h	/^typedef enum _BCP_Tag_e$/;"	g
+_BCP_Title_e	BCP_EncDec.h	/^typedef enum _BCP_Title_e$/;"	g
+_BCP_UTIL_H_	BCP_Util.h	3;"	d
+acBody	BCP_EncDec.h	/^	char			acBody[]; \/\/malloc$/;"	m	struct:_BCP_ReqMsg_s
+acValue	BCP_EncDec.h	/^	char			acValue[];$/;"	m	struct:_BCP_TLV_s
+g_nRunFlag	BCP_Main.c	/^int			g_nRunFlag = 1;$/;"	v
+g_tEnv	BCP_Main.c	/^BCP_Env_t	g_tEnv;$/;"	v
+main	BCP_Main.c	/^int main( int argc, char **argv )$/;"	f
+nFd	BCP_Inc.h	/^	int nFd;$/;"	m	struct:__anon1
+nPort	BCP_Inc.h	/^	int nPort;$/;"	m	struct:__anon1
+o	Makefile	/^o = BCP_Main.c \\$/;"	m
+szIp	BCP_Inc.h	/^	char szIp[16];$/;"	m	struct:__anon1
+szLoginId	BCP_EncDec.h	/^	char			szLoginId[BCP_LOGIN_ID_LEN + 1];$/;"	m	struct:_BCP_LoginReqData_s
+szLoginPw	BCP_EncDec.h	/^	char			szLoginPw[BCP_LOGIN_PW_LEN + 1];$/;"	m	struct:_BCP_LoginReqData_s
+t	Makefile	/^t = client$/;"	m
+tHeader	BCP_EncDec.h	/^	BCP_Header_t	tHeader;$/;"	m	struct:_BCP_ReqMsg_s
+ucMsgType	BCP_EncDec.h	/^	unsigned char	ucMsgType;$/;"	m	struct:_BCP_Header_s
+ucTag	BCP_EncDec.h	/^	unsigned char	ucTag;$/;"	m	struct:_BCP_TLV_s
+unBodyLength	BCP_EncDec.h	/^	unsigned int	unBodyLength;$/;"	m	struct:_BCP_Header_s
+usLength	BCP_EncDec.h	/^	unsigned short	usLength;$/;"	m	struct:_BCP_TLV_s

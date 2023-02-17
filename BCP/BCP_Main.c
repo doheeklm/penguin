@@ -31,7 +31,7 @@ int main( int argc, char **argv )
 		{
 			if ( isdigit(argv[2][i]) == 0 )
 			{
-				printf( "Port number contains character %c\n", argv[2][i] );
+				printf( "Port number contains character\n" );
 				return 0;
 			}
 		}
@@ -47,21 +47,31 @@ int main( int argc, char **argv )
 	signal( SIGPIPE, SIG_IGN );
 
 	printf( "Server Ip[%s] Port[%d]\n", g_tEnv.szIp, g_tEnv.nPort );	
-	
+/*
 	nRC = SOCK_Init();
-	if ( -1 == nRC )
+	if ( BCP_rOk != nRC )
 	{
 		printf( "SOCK_Init() fail\n" );
 		return -1;
 	}
-
+*/
 	while( g_nRunFlag )
 	{
-		
-		sleep(3);
+		nRC = TASK_Login();
+		if ( BCP_rOk != nRC )
+		{
+			goto exit_main;
+		}
+
+		//(1) Select BC_INFO
+		//(2) Insert BC_INFO
+		//(3) Delete BC_INFO
+		//(4) Logout
+
+		sleep(10);
 	}
 
-_exit_main:
+exit_main:
 	FD_CLOSE( g_tEnv.nFd );
 
 	return 0;
@@ -73,3 +83,5 @@ void SignalHandler( int nSigno )
 
 	g_nRunFlag = 0;
 }
+
+
