@@ -1,0 +1,179 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CC	Makefile	/^CC = gcc -DDEBUG #컴파일러$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -W -Wall -g #컴파일 옵션 세팅$/;"	m
+CHECK_PARAM	CS_Macro.h	5;"	d
+CHECK_PARAM_RC	CS_Macro.h	14;"	d
+CS_COMPANY_LEN	CS_EncDec.h	9;"	d
+CS_CreateReq_t	CS_EncDec.h	/^} CS_CreateReq_t;$/;"	t	typeref:struct:__anon5
+CS_DeleteReq_t	CS_EncDec.h	/^} CS_DeleteReq_t;$/;"	t	typeref:struct:__anon7
+CS_DeleteRes_t	CS_EncDec.h	/^} CS_DeleteRes_t;$/;"	t	typeref:struct:__anon9
+CS_DetailInfo_t	CS_EncDec.h	/^} CS_DetailInfo_t;$/;"	t	typeref:struct:__anon1
+CS_EC_DUPLICATE_LOGIN	CS_EncDec.h	/^    CS_EC_DUPLICATE_LOGIN      = 0x08,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_EMPTY_INFO	CS_EncDec.h	/^    CS_EC_EMPTY_INFO           = 0x05,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_FULL_INFO	CS_EncDec.h	/^    CS_EC_FULL_INFO            = 0x04,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_INFO_NOT_EXIST	CS_EncDec.h	/^    CS_EC_INFO_NOT_EXIST       = 0x06,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_INVALID_SESSION_ID	CS_EncDec.h	/^    CS_EC_INVALID_SESSION_ID   = 0x03,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_MISSING_FIELD	CS_EncDec.h	/^    CS_EC_MISSING_FIELD        = 0x09,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_SYSTEM_FAIL	CS_EncDec.h	/^    CS_EC_SYSTEM_FAIL          = 0x07,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_UNDEFINED_ERR	CS_EncDec.h	/^    CS_EC_UNDEFINED_ERR        = 0x0A$/;"	e	enum:_CS_ErrCode_e
+CS_EC_USER_NOT_EXIST	CS_EncDec.h	/^    CS_EC_USER_NOT_EXIST       = 0x01,$/;"	e	enum:_CS_ErrCode_e
+CS_EC_WRONG_PASSWORD	CS_EncDec.h	/^    CS_EC_WRONG_PASSWORD       = 0x02,$/;"	e	enum:_CS_ErrCode_e
+CS_EMAIL_LEN	CS_EncDec.h	13;"	d
+CS_Env_t	CS_Inc.h	/^} CS_Env_t;$/;"	t	typeref:struct:__anon12
+CS_ErrCode_e	CS_EncDec.h	/^} CS_ErrCode_e;$/;"	t	typeref:enum:_CS_ErrCode_e
+CS_FIELD_MASK_CREATE	CS_EncDec.h	16;"	d
+CS_FIELD_MASK_DELETE	CS_EncDec.h	20;"	d
+CS_FIELD_MASK_LOGIN	CS_EncDec.h	15;"	d
+CS_FIELD_MASK_SEARCH	CS_EncDec.h	17;"	d
+CS_Header_t	CS_EncDec.h	/^} CS_Header_t;$/;"	t	typeref:struct:__anon3
+CS_LOGIN_ID_LEN	CS_EncDec.h	6;"	d
+CS_LOGIN_PW_LEN	CS_EncDec.h	7;"	d
+CS_LoginReq_t	CS_EncDec.h	/^} CS_LoginReq_t;$/;"	t	typeref:struct:__anon4
+CS_MAX_INO	CS_EncDec.h	5;"	d
+CS_MOBILE_LEN	CS_EncDec.h	10;"	d
+CS_MSG_CREATE_REQ	CS_EncDec.h	/^    CS_MSG_CREATE_REQ          = 0x02,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_CREATE_RES	CS_EncDec.h	/^    CS_MSG_CREATE_RES          = 0x12,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_DELETE_REQ	CS_EncDec.h	/^    CS_MSG_DELETE_REQ          = 0x04,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_DELETE_RES	CS_EncDec.h	/^    CS_MSG_DELETE_RES          = 0x14,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_LOGIN_REQ	CS_EncDec.h	/^    CS_MSG_LOGIN_REQ           = 0x01,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_LOGIN_RES	CS_EncDec.h	/^    CS_MSG_LOGIN_RES           = 0x11,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_LOGOUT_REQ	CS_EncDec.h	/^    CS_MSG_LOGOUT_REQ          = 0x05,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_LOGOUT_RES	CS_EncDec.h	/^    CS_MSG_LOGOUT_RES          = 0x15$/;"	e	enum:_CS_MsgType_e
+CS_MSG_SEARCH_REQ	CS_EncDec.h	/^    CS_MSG_SEARCH_REQ          = 0x03,$/;"	e	enum:_CS_MsgType_e
+CS_MSG_SEARCH_RES	CS_EncDec.h	/^    CS_MSG_SEARCH_RES          = 0x13,$/;"	e	enum:_CS_MsgType_e
+CS_MsgType_e	CS_EncDec.h	/^} CS_MsgType_e;$/;"	t	typeref:enum:_CS_MsgType_e
+CS_NAME_LEN	CS_EncDec.h	8;"	d
+CS_P_ASSISTANT	CS_EncDec.h	/^    CS_P_ASSISTANT             = 0x06,$/;"	e	enum:_CS_Position_e
+CS_P_ASSISTANT_MANAGER	CS_EncDec.h	/^    CS_P_ASSISTANT_MANAGER     = 0x02,$/;"	e	enum:_CS_Position_e
+CS_P_CEO	CS_EncDec.h	/^    CS_P_CEO                   = 0x0D,$/;"	e	enum:_CS_Position_e
+CS_P_CHAIRMAN	CS_EncDec.h	/^    CS_P_CHAIRMAN              = 0x0E$/;"	e	enum:_CS_Position_e
+CS_P_DEPUTY_GENERAL_MANAGER	CS_EncDec.h	/^    CS_P_DEPUTY_GENERAL_MANAGER= 0x04,$/;"	e	enum:_CS_Position_e
+CS_P_DIRECTOR	CS_EncDec.h	/^    CS_P_DIRECTOR              = 0x0A,$/;"	e	enum:_CS_Position_e
+CS_P_EMPLOYEE	CS_EncDec.h	/^    CS_P_EMPLOYEE              = 0x01,$/;"	e	enum:_CS_Position_e
+CS_P_GENERAL_MANAGER	CS_EncDec.h	/^    CS_P_GENERAL_MANAGER       = 0x05,$/;"	e	enum:_CS_Position_e
+CS_P_JUNIOR	CS_EncDec.h	/^    CS_P_JUNIOR                = 0x07,$/;"	e	enum:_CS_Position_e
+CS_P_MANAGER	CS_EncDec.h	/^    CS_P_MANAGER               = 0x03,$/;"	e	enum:_CS_Position_e
+CS_P_MANAGING_DIRECTOR	CS_EncDec.h	/^    CS_P_MANAGING_DIRECTOR     = 0x0B,$/;"	e	enum:_CS_Position_e
+CS_P_PRINCIPAL	CS_EncDec.h	/^    CS_P_PRINCIPAL             = 0x09,$/;"	e	enum:_CS_Position_e
+CS_P_SENIOR	CS_EncDec.h	/^    CS_P_SENIOR                = 0x08,$/;"	e	enum:_CS_Position_e
+CS_P_SENIOR_MANAGING_DIRECTOR	CS_EncDec.h	/^    CS_P_SENIOR_MANAGING_DIRECTOR = 0x0C,$/;"	e	enum:_CS_Position_e
+CS_Position_e	CS_EncDec.h	/^} CS_Position_e;$/;"	t	typeref:enum:_CS_Position_e
+CS_RC_FAIL	CS_EncDec.h	/^    CS_RC_FAIL                 = 0x01$/;"	e	enum:_CS_ReturnCode_e
+CS_RC_SUCC	CS_EncDec.h	/^    CS_RC_SUCC                 = 0x00,$/;"	e	enum:_CS_ReturnCode_e
+CS_Res_t	CS_EncDec.h	/^} CS_Res_t;$/;"	t	typeref:struct:__anon10
+CS_ReturnCode_e	CS_EncDec.h	/^} CS_ReturnCode_e;$/;"	t	typeref:enum:_CS_ReturnCode_e
+CS_SearchReq_t	CS_EncDec.h	/^} CS_SearchReq_t;$/;"	t	typeref:struct:__anon6
+CS_SearchRes_t	CS_EncDec.h	/^} CS_SearchRes_t;$/;"	t	typeref:struct:__anon8
+CS_SimpleInfo_t	CS_EncDec.h	/^} CS_SimpleInfo_t;$/;"	t	typeref:struct:__anon2
+CS_TAG_CARD_ID	CS_EncDec.h	/^    CS_TAG_CARD_ID             = 0x10,$/;"	e	enum:_CS_Tag_e
+CS_TAG_CNT	CS_EncDec.h	/^    CS_TAG_CNT                 = 0x21,$/;"	e	enum:_CS_Tag_e
+CS_TAG_COMPANY	CS_EncDec.h	/^    CS_TAG_COMPANY             = 0x12,$/;"	e	enum:_CS_Tag_e
+CS_TAG_EMAIL	CS_EncDec.h	/^    CS_TAG_EMAIL               = 0x18,$/;"	e	enum:_CS_Tag_e
+CS_TAG_ERR_CODE	CS_EncDec.h	/^    CS_TAG_ERR_CODE            = 0x31$/;"	e	enum:_CS_Tag_e
+CS_TAG_LOGIN_ID	CS_EncDec.h	/^    CS_TAG_LOGIN_ID            = 0x01,$/;"	e	enum:_CS_Tag_e
+CS_TAG_LOGIN_PW	CS_EncDec.h	/^    CS_TAG_LOGIN_PW            = 0x02,$/;"	e	enum:_CS_Tag_e
+CS_TAG_MOBILE	CS_EncDec.h	/^    CS_TAG_MOBILE              = 0x13,$/;"	e	enum:_CS_Tag_e
+CS_TAG_NAME	CS_EncDec.h	/^    CS_TAG_NAME                = 0x11,$/;"	e	enum:_CS_Tag_e
+CS_TAG_POSITION	CS_EncDec.h	/^    CS_TAG_POSITION            = 0x16,$/;"	e	enum:_CS_Tag_e
+CS_TAG_RESULT_CODE	CS_EncDec.h	/^    CS_TAG_RESULT_CODE         = 0x30,$/;"	e	enum:_CS_Tag_e
+CS_TAG_SESSION_ID	CS_EncDec.h	/^    CS_TAG_SESSION_ID          = 0x03,$/;"	e	enum:_CS_Tag_e
+CS_TAG_TEAM	CS_EncDec.h	/^    CS_TAG_TEAM                = 0x15,$/;"	e	enum:_CS_Tag_e
+CS_TAG_TEL	CS_EncDec.h	/^    CS_TAG_TEL                 = 0x14,$/;"	e	enum:_CS_Tag_e
+CS_TAG_TITLE	CS_EncDec.h	/^    CS_TAG_TITLE               = 0x17,$/;"	e	enum:_CS_Tag_e
+CS_TAG_TOTAL_CNT	CS_EncDec.h	/^    CS_TAG_TOTAL_CNT           = 0x20,$/;"	e	enum:_CS_Tag_e
+CS_TEAM_LEN	CS_EncDec.h	12;"	d
+CS_TEL_LEN	CS_EncDec.h	11;"	d
+CS_T_CEO	CS_EncDec.h	/^    CS_T_CEO                   = 0x09$/;"	e	enum:_CS_Title_e
+CS_T_CHEIF_OF_STAFF	CS_EncDec.h	/^    CS_T_CHEIF_OF_STAFF        = 0x02,$/;"	e	enum:_CS_Title_e
+CS_T_CTO	CS_EncDec.h	/^    CS_T_CTO                   = 0x08,$/;"	e	enum:_CS_Title_e
+CS_T_DIRECTOR	CS_EncDec.h	/^    CS_T_DIRECTOR              = 0x05,$/;"	e	enum:_CS_Title_e
+CS_T_GROUP_LEADER	CS_EncDec.h	/^    CS_T_GROUP_LEADER          = 0x06,$/;"	e	enum:_CS_Title_e
+CS_T_HEAD_OF_DEPARTMENT	CS_EncDec.h	/^    CS_T_HEAD_OF_DEPARTMENT    = 0x03,$/;"	e	enum:_CS_Title_e
+CS_T_HEAD_OF_DEVISION	CS_EncDec.h	/^    CS_T_HEAD_OF_DEVISION      = 0x04,$/;"	e	enum:_CS_Title_e
+CS_T_MANAGER_OF_DEPARMENT	CS_EncDec.h	/^    CS_T_MANAGER_OF_DEPARMENT  = 0x07,$/;"	e	enum:_CS_Title_e
+CS_T_STAFF	CS_EncDec.h	/^    CS_T_STAFF                 = 0x01,$/;"	e	enum:_CS_Title_e
+CS_Tag_e	CS_EncDec.h	/^} CS_Tag_e;$/;"	t	typeref:enum:_CS_Tag_e
+CS_Title_e	CS_EncDec.h	/^} CS_Title_e;$/;"	t	typeref:enum:_CS_Title_e
+CS_rErrFail	CS_Errmsg.h	/^	CS_rErrFail,$/;"	e	enum:__anon13
+CS_rErrInvalidParam	CS_Errmsg.h	/^	CS_rErrInvalidParam,$/;"	e	enum:__anon13
+CS_rErrSocketInit	CS_Errmsg.h	/^	CS_rErrSocketInit,$/;"	e	enum:__anon13
+CS_rExitProgram	CS_Errmsg.h	/^	CS_rExitProgram$/;"	e	enum:__anon13
+CS_rOk	CS_Errmsg.h	/^	CS_rOk = 1000,$/;"	e	enum:__anon13
+ClearStdin	CS_Util.c	/^void ClearStdin( char *pStr )$/;"	f
+FD_CLOSE	CS_Macro.h	16;"	d
+ReturnCode_e	CS_Errmsg.h	/^} ReturnCode_e;$/;"	t	typeref:enum:__anon13
+SOCK_Init	CS_Sock.c	/^int SOCK_Init()$/;"	f
+SignalHandler	CS_Main.c	/^void SignalHandler( int nSigno )$/;"	f
+TASK_Login	CS_Task.c	/^int TASK_Login()$/;"	f
+_CS_ENCDEC_H_	CS_EncDec.h	3;"	d
+_CS_ERR_H_	CS_Errmsg.h	3;"	d
+_CS_ErrCode_e	CS_EncDec.h	/^typedef enum _CS_ErrCode_e$/;"	g
+_CS_INC_H_	CS_Inc.h	3;"	d
+_CS_MACRO_H_	CS_Macro.h	3;"	d
+_CS_MENU_H_	CS_Menu.h	3;"	d
+_CS_MsgType_e	CS_EncDec.h	/^typedef enum _CS_MsgType_e$/;"	g
+_CS_Position_e	CS_EncDec.h	/^typedef enum _CS_Position_e$/;"	g
+_CS_ReturnCode_e	CS_EncDec.h	/^typedef enum _CS_ReturnCode_e$/;"	g
+_CS_SOCK_H_	CS_Sock.h	3;"	d
+_CS_TASK_H_	CS_Task.h	3;"	d
+_CS_Tag_e	CS_EncDec.h	/^typedef enum _CS_Tag_e$/;"	g
+_CS_Title_e	CS_EncDec.h	/^typedef enum _CS_Title_e$/;"	g
+_CS_UTIL_H_	CS_Util.h	3;"	d
+g_nRunFlag	CS_Main.c	/^int			g_nRunFlag = 1;$/;"	v
+g_tEnv	CS_Main.c	/^CS_Env_t	g_tEnv;$/;"	v
+main	CS_Main.c	/^int main( int argc, char **argv )$/;"	f
+nClientFd	CS_Inc.h	/^	int				nClientFd;$/;"	m	struct:__anon12
+nPort	CS_Inc.h	/^	int				nPort;$/;"	m	struct:__anon12
+o	Makefile	/^o = CS_Main.c \\$/;"	m
+szCompany	CS_EncDec.h	/^	char            szCompany[COMPANY_LEN + 1];$/;"	m	struct:__anon2
+szCompany	CS_EncDec.h	/^	char            szCompany[CS_COMPANY_LEN + 1];$/;"	m	struct:__anon1
+szCompany	CS_EncDec.h	/^	char            szCompany[CS_COMPANY_LEN + 1];$/;"	m	struct:__anon5
+szCompany	CS_EncDec.h	/^	char            szCompany[CS_COMPANY_LEN + 1];$/;"	m	struct:__anon6
+szCompany	CS_EncDec.h	/^	char            szCompany[CS_COMPANY_LEN + 1];$/;"	m	struct:__anon7
+szEmail	CS_EncDec.h	/^	char            szEmail[CS_EMAIL_LEN + 1];$/;"	m	struct:__anon1
+szEmail	CS_EncDec.h	/^	char            szEmail[CS_EMAIL_LEN + 1];$/;"	m	struct:__anon5
+szIp	CS_Inc.h	/^	char			szIp[16];$/;"	m	struct:__anon12
+szLoginId	CS_EncDec.h	/^	char            szLoginId[CS_LOGIN_ID_LEN + 1];$/;"	m	struct:__anon4
+szLoginPw	CS_EncDec.h	/^	char            szLoginPw[CS_LOGIN_PW_LEN + 1];$/;"	m	struct:__anon4
+szMobile	CS_EncDec.h	/^	char            szMobile[CS_MOBILE_LEN + 1];$/;"	m	struct:__anon1
+szMobile	CS_EncDec.h	/^	char            szMobile[CS_MOBILE_LEN + 1];$/;"	m	struct:__anon5
+szMobile	CS_EncDec.h	/^	char            szMobile[MOBILE_LEN + 1];$/;"	m	struct:__anon2
+szName	CS_EncDec.h	/^	char            szName[CS_NAME_LEN + 1];$/;"	m	struct:__anon1
+szName	CS_EncDec.h	/^	char            szName[CS_NAME_LEN + 1];$/;"	m	struct:__anon5
+szName	CS_EncDec.h	/^	char            szName[CS_NAME_LEN + 1];$/;"	m	struct:__anon6
+szName	CS_EncDec.h	/^	char            szName[CS_NAME_LEN + 1];$/;"	m	struct:__anon7
+szName	CS_EncDec.h	/^	char            szName[NAME_LEN + 1];$/;"	m	struct:__anon2
+szTeam	CS_EncDec.h	/^	char            szTeam[CS_TEAM_LEN + 1];$/;"	m	struct:__anon1
+szTeam	CS_EncDec.h	/^	char            szTeam[CS_TEAM_LEN + 1];$/;"	m	struct:__anon5
+szTel	CS_EncDec.h	/^	char            szTel[CS_TEL_LEN + 1];$/;"	m	struct:__anon1
+szTel	CS_EncDec.h	/^	char            szTel[CS_TEL_LEN + 1];$/;"	m	struct:__anon5
+t	Makefile	/^t = cs$/;"	m
+tDeleteRes	CS_EncDec.h	/^		CS_DeleteRes_t	tDeleteRes;$/;"	m	union:__anon10::__anon11
+tDetailInfo	CS_EncDec.h	/^	CS_DetailInfo_t  tDetailInfo[CS_MAX_INFO];$/;"	m	struct:__anon8
+tSearchRes	CS_EncDec.h	/^		CS_SearchRes_t	tSearchRes;$/;"	m	union:__anon10::__anon11
+tSimpleInfo	CS_EncDec.h	/^	CS_SimpleInfo_t  tSimpleInfo[CS_MAX_INFO];$/;"	m	struct:__anon9
+u	CS_EncDec.h	/^	} u;$/;"	m	struct:__anon10	typeref:union:__anon10::__anon11
+ucErrCode	CS_EncDec.h	/^		unsigned char	ucErrCode;$/;"	m	union:__anon10::__anon11
+ucMsgType	CS_EncDec.h	/^	unsigned char   ucMsgType;$/;"	m	struct:__anon3
+ucPosition	CS_EncDec.h	/^	unsigned char   ucPosition;$/;"	m	struct:__anon1
+ucPosition	CS_EncDec.h	/^	unsigned char   ucPosition;$/;"	m	struct:__anon5
+ucResultCode	CS_EncDec.h	/^	unsigned char ucResultCode;$/;"	m	struct:__anon10
+ucTitle	CS_EncDec.h	/^	unsigned char   ucTitle;$/;"	m	struct:__anon1
+ucTitle	CS_EncDec.h	/^	unsigned char   ucTitle;$/;"	m	struct:__anon5
+ulSessionId	CS_EncDec.h	/^		unsigned long	ulSessionId; \/\/LoginRes$/;"	m	union:__anon10::__anon11
+ulSessionId	CS_Inc.h	/^	unsigned long	ulSessionId;$/;"	m	struct:__anon12
+unBodyLen	CS_EncDec.h	/^	unsigned int    unBodyLen;$/;"	m	struct:__anon3
+unCardId	CS_EncDec.h	/^		unsigned int 	unCardId;    \/\/CreateRes$/;"	m	union:__anon10::__anon11
+unCardId	CS_EncDec.h	/^	unsigned int    unCardId;$/;"	m	struct:__anon1
+unCardId	CS_EncDec.h	/^	unsigned int    unCardId;$/;"	m	struct:__anon2
+unCardId	CS_EncDec.h	/^	unsigned int    unCardId;$/;"	m	struct:__anon6
+unCardId	CS_EncDec.h	/^	unsigned int    unCardId;$/;"	m	struct:__anon7
+unCnt	CS_EncDec.h	/^	unsigned int    unCnt;$/;"	m	struct:__anon1
+unCnt	CS_EncDec.h	/^	unsigned int    unCnt;$/;"	m	struct:__anon2
+usTotalCnt	CS_EncDec.h	/^	unsigned short   usTotalCnt;$/;"	m	struct:__anon8
+usTotalCnt	CS_EncDec.h	/^	unsigned short   usTotalCnt;$/;"	m	struct:__anon9
