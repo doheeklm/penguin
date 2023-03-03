@@ -1,17 +1,32 @@
 /* CS_Util.c */
 #include "CS_Inc.h"
 
-void ClearStdin( char *pStr )
+void UTIL_ClearStdin( char *pszBuf )
 {
-	if ( NULL == pStr )
+	if ( NULL == pszBuf )
 	{
 		return;
 	}
 
-	if ( pStr[strlen(pStr) - 1] == '\n' )
+	if ( pszBuf[strlen(pszBuf) - 1] == '\n' )
 	{
-		pStr[strlen(pStr) - 1] = '\0';
+		pszBuf[strlen(pszBuf) - 1] = '\0';
 	}
 
 	__fpurge(stdin);
 }
+
+void UTIL_PrtBuf( const char *pszBuf, int nBufLen )
+{
+	int i = 0;
+
+	for ( i = 0; i < nBufLen; i++ )
+	{
+		if ( i % 20 == 0 )
+		{
+			printf( "\n" );
+		}
+		printf( "%02x ", pszBuf[i] );
+	}
+}
+

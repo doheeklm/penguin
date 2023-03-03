@@ -8,35 +8,13 @@ void SignalHandler( int nSigno );
 
 int main( int argc, char **argv )
 {
-	int nRC = 0;
+	int nRC = 0, nErrCnt = 0;
 
-	if( argc > 3 )
+	nRC = CONF_Init( argc, argv[2], argv[1] );
+	if ( CS_rOk != nRC )
 	{
-		printf( "Usage: client [Server Ip] [Port]\n" );
-		return 0;
-	}
-	else if ( argc == 1 )
-	{
-		strncpy( g_tEnv.szIp, "127.0.0.1", sizeof(g_tEnv.szIp) );
-		g_tEnv.szIp[ strlen(g_tEnv.szIp) ] = '\0';
-
-		g_tEnv.nPort = 20200;	
-	}
-	else
-	{
-		strncpy( g_tEnv.szIp, argv[1], sizeof(g_tEnv.szIp) );
-		g_tEnv.szIp[ strlen(g_tEnv.szIp) ] = '\0';
-
-		for ( int i = 0; i < strlen(argv[2]); i++ )
-		{
-			if ( isdigit(argv[2][i]) == 0 )
-			{
-				printf( "Port number contains character\n" );
-				return 0;
-			}
-		}
-
-		g_tEnv.nPort = atoi( argv[2] );
+		printf( "CONF_Init fail\n" );
+		return -1;
 	}
 
 	signal( SIGHUP, SignalHandler );
@@ -46,33 +24,50 @@ int main( int argc, char **argv )
 	signal( SIGKILL, SignalHandler );
 	signal( SIGPIPE, SIG_IGN );
 
-	printf( "Server Ip[%s] Port[%d]\n", g_tEnv.szIp, g_tEnv.nPort );	
-/*
+#ifdef RUN
 	nRC = SOCK_Init();
 	if ( CS_rOk != nRC )
 	{
-		printf( "SOCK_Init() fail\n" );
+		printf( "SOCK_Init fail\n" );
 		return -1;
 	}
-*/
+#endif
+	
 	while( g_nRunFlag )
 	{
 		nRC = TASK_Login();
 		if ( CS_rOk != nRC )
 		{
-			goto exit_main;
+			if ( CS_rErrLoginFail == nRC )
+			{
+				nErrCnt++;
+				PRT_SYS;
+				PRT_ERR_CNT( nErrCnt );
+
+				if ( nErrCnt >= 3 )
+				{
+					PRT_EXIT;
+					goto exit_main;
+				}
+				else
+				{
+					PRT_RETRY;
+					continue;
+				}
+			}
+			else
+			{
+				PRT_SYS_FAIL;
+				goto exit_main;
+			}
 		}
+	
+		nRC = TASK_Menu();
 
-		//(1) Select BC_INFO
-		//(2) Insert BC_INFO
-		//(3) Delete BC_INFO
-		//(4) Logout
-
-		sleep(10);
 	}
 
 exit_main:
-	FD_CLOSE( g_tEnv.nFd );
+	FD_CLOSE( g_tEnv.nClientFd );
 
 	return 0;
 }
@@ -83,5 +78,3 @@ void SignalHandler( int nSigno )
 
 	g_nRunFlag = 0;
 }
-
-

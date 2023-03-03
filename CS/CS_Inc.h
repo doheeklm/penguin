@@ -15,12 +15,14 @@
 #include <arpa/inet.h>
 #include <stdio_ext.h>
 
+#include "CS_Conf.h"
 #include "CS_Macro.h"
 #include "CS_Errmsg.h"
 #include "CS_Util.h"
 #include "CS_Sock.h"
 #include "CS_EncDec.h"
 #include "CS_Task.h"
+#include "CS_Sim.h"
 
 typedef struct
 {

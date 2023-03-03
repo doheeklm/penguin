@@ -1,4 +1,4 @@
-CC = gcc -DDEBUG #컴파일러
+CC = gcc -DDEBUG -DSIM #컴파일러
 CFLAGS = -W -Wall -g #컴파일 옵션 세팅
 # -D[매크로]
 # -D[매크로]=[매크로값]
@@ -11,11 +11,13 @@ t = cs
 #TARGET:: main
 
 o = CS_Main.c \
+	CS_Conf.c \
 	CS_Util.c \
 	CS_Sock.c \
 	CS_EncDec.c \
 	CS_Task.c \
-	CS_Menu.c
+	CS_Menu.c \
+	CS_Sim.c
 #OBJECTS:: shm_rcv.c
 
 all : $(t) #타겟 파일이 여러 개일때
