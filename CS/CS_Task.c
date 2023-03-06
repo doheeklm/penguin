@@ -7,43 +7,63 @@ int TASK_Login()
 {
 	int nRC = 0, nPos = 0;
 
-	CS_Header_t tReqHeader, tResHeader;
+	/* Request  */
+	CS_Header_t tReqHeader;
 	CS_LoginReqData_t tLoginReqData;
-	CS_ResBody_t tResBody;
-	
 	unsigned char ucReqBuf[CS_REQ_BUF_LEN];
-	unsigned char ucResHeaderBuf[CS_RES_HEADER_BUF_LEN];
-	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN];
 
 	memset( &tReqHeader, 0x00, sizeof(tReqHeader) );
-	memset( &tResHeader, 0x00, sizeof(tResHeader) );
 	memset( &tLoginReqData, 0x00, sizeof(tLoginReqData) );
 	memset( ucReqBuf, 0x00, sizeof(ucReqBuf) );
+
+	/* Response */
+	unsigned char ucResHeaderBuf[CS_RES_HEADER_BUF_LEN];
+	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN];
+	CS_Header_t tResHeader;
+	CS_ResBody_t tResBody;
+	
 	memset( ucResHeaderBuf, 0x00, sizeof(ucResHeaderBuf) );
 	memset( ucResBodyBuf, 0x00, sizeof(ucResBodyBuf) );
+	memset( &tResHeader, 0x00, sizeof(tResHeader) );
+	memset( &tResBody, 0x00, sizeof(tResBody) );
 
+	/**************/
+	/* Input Data */
+	/**************/
+	PRT_TITLE( "Login" );	
 	do
 	{
-		printf( "\n... Login ...\n" );
-		printf( "ID : " );
-		fgets( tLoginReqData.szLoginId, sizeof(tLoginReqData.szLoginId), stdin );
-		UTIL_ClearStdin( tLoginReqData.szLoginId );
-	
-		if ( 0 == strcmp( tLoginReqData.szLoginId, "exit" ) )
+		nRC = UTIL_InputData( "ID", tLoginReqData.szLoginId, sizeof(tLoginReqData.szLoginId) );
+		if ( CS_rOk != nRC )
 		{
-			PRT_EXIT;
-			return CS_rExitProgram;
+			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
+			return CS_rErrClientServerFail;
 		}
+	} while ( NULL != strchr(tLoginReqData.szLoginId, CS_SPACE) ||
+			  EMPTY_INPUT == strlen(tLoginReqData.szLoginId) );
 
-		printf( "PW : " );
-		fgets( tLoginReqData.szLoginPw, sizeof(tLoginReqData.szLoginPw), stdin );
-		UTIL_ClearStdin( tLoginReqData.szLoginPw );
+	if ( 0 == strcmp( tLoginReqData.szLoginId, "exit" ) )
+	{
+		PRT_EXIT;
+		return CS_rExitProgram;
+	}
+
+	do {
+		nRC = UTIL_InputData( "PW", tLoginReqData.szLoginPw, sizeof(tLoginReqData.szLoginPw) );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
+			return CS_rErrClientServerFail;
+		}
 		
-	} while ( NULL != strchr(tLoginReqData.szLoginId, ' ') ||
-			  NULL != strchr(tLoginReqData.szLoginPw, ' ') );
+	} while ( NULL != strchr(tLoginReqData.szLoginPw, CS_SPACE) ||
+			  EMPTY_INPUT == strlen(tLoginReqData.szLoginPw) );
 
 	printf( "\n%s/%s\n", tLoginReqData.szLoginId, tLoginReqData.szLoginPw ); 
 
+	/*******************/
+	/* Request Message */
+	/*******************/
 	tReqHeader.ucMsgType = CS_MSG_LOGIN_REQ;
 
 	nRC = ENCDEC_EncodingHeader( ucReqBuf, sizeof(ucReqBuf), &tReqHeader );
@@ -74,14 +94,13 @@ int TASK_Login()
 	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
 
 #ifdef DEBUG
-	PRT_REQ;
+	PRT_TITLE( "Login Request" )
 	UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
 	PRT_LF;
 #endif
 
 #ifdef SIM
 	SIM_Login( ucResHeaderBuf, ucResBodyBuf );
-
 #endif
 
 #ifdef RUN
@@ -92,6 +111,9 @@ int TASK_Login()
 		return CS_rErrWriteFail;
 	}
 
+	/********************/
+	/* Response Message */
+	/********************/
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( 0 > nRC )
 	{
@@ -99,6 +121,7 @@ int TASK_Login()
 		return CS_rErrReadFail;
 	}
 #endif
+
 	nRC = ENCDEC_DecodingHeader( ucResHeaderBuf, &tResHeader );
 	if ( CS_rOk != nRC )
 	{
@@ -114,7 +137,8 @@ int TASK_Login()
 		return CS_rErrReadFail;
 	}
 #endif
-	PRT_RES;
+
+	PRT_TITLE( "Login Response" );
 	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	UTIL_PrtBuf( ucResBodyBuf, tResHeader.unBodyLen );
 
@@ -130,13 +154,15 @@ int TASK_Login()
 		case CS_RC_SUCCESS:
 		{
 			g_tEnv.ulSessionId = tResBody.u.ulSessionId;
-			PRT_SUCCESS;
+			PRT_TITLE( "Success" );
 			printf( "Session ID = %ld\n", g_tEnv.ulSessionId );
+
+			//TODO Session ID byteordering
 		}
 			break;
 		case CS_RC_FAIL:
 		{
-			PRT_FAIL;
+			PRT_TITLE( "Fail" );
 			printf( "Error Code = %02x\n", tResBody.u.ucErrCode );
 			return CS_rErrLoginFail;
 		}
@@ -149,31 +175,78 @@ int TASK_Login()
 			break;
 	}
 
+	//RES_FIELD_MASK TODO
+
 	return CS_rOk;
 }
 
 int TASK_Menu()
 {
-	int nSelect = 0;
-
-	PRT_MENU;
-
+	int nSelect = 0, nRC = 0;
+	
 	while ( 1 )
 	{
+		PRT_MENU;
+		printf( "Input: " );
 		scanf( "%d", &nSelect );
-
+		UTIL_ClearLine();
+		
 		if ( TASK_MENU(nSelect) )
 		{
-			printf( "OK!\n" );
-			break;
-		}
-		else
-		{
-			printf( "Input: " );
-		}
+			switch( nSelect )
+			{
+				case MENU_CREATE:
+				{
+					PRT_TITLE( "Create" );
+
+					nRC = MENU_Create();
+					if ( CS_rOk != nRC )
+					{
+						LOG_ERR_F( "MENU_Create fail <%d>", nRC );
+						return nRC;
+					}
+				}
+					break;
+				case MENU_SEARCH:
+				{
+					PRT_TITLE( "Search" );
+				
+					nRC = MENU_Search();
+					if ( CS_rOk != nRC )
+					{
+						LOG_ERR_F( "MENU_Search fail <%d>", nRC );
+						return nRC;
+					}
+				}
+					break;
+				case MENU_DELETE:
+				{
+					PRT_TITLE( "Delete" );
+
+					nRC = MENU_Delete();
+					if ( CS_rOk != nRC )
+					{
+						LOG_ERR_F( "MENU_Delete fail <%d>", nRC );
+						return nRC;
+					}
+				}
+					break;
+				case MENU_LOGOUT:
+				{
+					PRT_TITLE( "Logout" );
+				}
+					break;
+				case MENU_ADMIN:
+				{
+					return CS_rExitProgram;
+				}
+					break;
+				default:
+					return CS_rErrClientServerFail;
+					break;
+			}
+		} 
 	}
-
-	sleep(10);
-
+	
 	return CS_rOk;
 }

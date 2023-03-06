@@ -52,17 +52,28 @@
 									"(2) Search Info\n" \
 									"(3) Delete Info\n" \
 									"(4) Logout\n" \
-									"Input: " );
-#define PRT_SYS				printf( "\n... System ...\n\n" );
-#define PRT_REQ				printf( "\n... Request ..." );
-#define PRT_RES				printf( "\n... Response ..." );
-#define PRT_SUCCESS			printf( "\n\n... Success ...\n" );
-#define PRT_FAIL			printf( "\n\n... Fail ...\n" );
+									"(5) {Admin Only}\n" );
+#define PRT_TITLE( a, ...)	printf( "\n... " a " ...\n", ##__VA_ARGS__ );
 #define PRT_ERR_CNT( _cnt ) printf( "로그인 실패 횟수 (%d)\n", _cnt );
 #define PRT_EXIT			printf( "\n프로그램을 종료합니다.\n\n" ); 
 #define PRT_RETRY			printf( "최대 3번까지 재시도 가능합니다.\n" \
 									"로그인 정보를 다시 입력해주세요.\n" );
 #define PRT_SYS_FAIL		printf( "\n서버 오류를 감지했습니다.\n" \
 									"프로그램을 종료합니다.\n\n" ); 
+
+#define STR_TO_INT( _a, _b ) \
+	do { \
+		if ( EMPTY_INPUT != strlen(_a) ) \
+		{ \
+			if ( 0 == (int)strtol(_a, NULL, 0) ) \
+			{ \
+				_b = 0; \
+			} \
+			else \
+			{ \
+				_b = (unsigned int)strtol(_a, NULL, 0); \
+			} \
+		} \
+	} while ( 0 );
 
 #endif /* _CS_MACRO_H_ */

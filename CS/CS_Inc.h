@@ -23,13 +23,14 @@
 #include "CS_EncDec.h"
 #include "CS_Task.h"
 #include "CS_Sim.h"
+#include "CS_Menu.h"
 
 typedef struct
 {
 	char			szIp[16];
 	int				nPort;
 	int				nClientFd;
-	unsigned long	ulSessionId;
+	unsigned long 	ulSessionId;
 } CS_Env_t;
 
 #endif /* _CS_INC_H_ */

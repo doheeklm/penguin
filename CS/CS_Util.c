@@ -16,17 +16,38 @@ void UTIL_ClearStdin( char *pszBuf )
 	__fpurge(stdin);
 }
 
+void UTIL_ClearLine()
+{
+	while ( getchar() != '\n' );
+}
+
 void UTIL_PrtBuf( const char *pszBuf, int nBufLen )
 {
 	int i = 0;
 
 	for ( i = 0; i < nBufLen; i++ )
 	{
-		if ( i % 20 == 0 )
+		if ( (i != 0) && (i % 50 == 0) )
 		{
-			printf( "\n" );
+			PRT_LF;
 		}
+
 		printf( "%02x ", pszBuf[i] );
 	}
 }
 
+int UTIL_InputData( const char *pszPrt, char *pszBuf, int nBufLen )
+{
+	CHECK_PARAM_RC( pszPrt );
+	CHECK_PARAM_RC( pszBuf );
+
+	printf( "%s: ", pszPrt );
+
+	char *pszTemp;
+	pszTemp = pszBuf;
+	
+	fgets( pszTemp, nBufLen, stdin );
+	UTIL_ClearStdin( pszTemp );
+
+	return CS_rOk;
+}

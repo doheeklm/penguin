@@ -41,7 +41,7 @@ int main( int argc, char **argv )
 			if ( CS_rErrLoginFail == nRC )
 			{
 				nErrCnt++;
-				PRT_SYS;
+				PRT_TITLE( "System" );
 				PRT_ERR_CNT( nErrCnt );
 
 				if ( nErrCnt >= 3 )
@@ -63,7 +63,11 @@ int main( int argc, char **argv )
 		}
 	
 		nRC = TASK_Menu();
-
+		if ( CS_rOk != nRC )
+		{
+			PRT_EXIT;
+			goto exit_main;	
+		}
 	}
 
 exit_main:
