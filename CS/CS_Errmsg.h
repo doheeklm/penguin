@@ -9,7 +9,7 @@ typedef enum
 	CS_rErrOverflow,
 
 	CS_rErrConfigInit,
-	CS_rErrSocketInit,
+	CS_rErrSocketFail,
 	CS_rErrWriteFail,
 	CS_rErrReadFail,
 	CS_rErrWrongLength,
@@ -19,8 +19,9 @@ typedef enum
 	CS_rErrLoginFail, //클라이언트측 에러
 
 	CS_rErrDecodingFail,
-	CS_rErrMissingTag,
+	CS_rErrWrongResponse,
 
+	CS_rBackToLogin,
 	CS_rExitProgram,
 	CS_rOk = 1000,
 

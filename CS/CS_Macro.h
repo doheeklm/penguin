@@ -60,10 +60,37 @@
 									"로그인 정보를 다시 입력해주세요.\n" );
 #define PRT_SYS_FAIL		printf( "\n서버 오류를 감지했습니다.\n" \
 									"프로그램을 종료합니다.\n\n" ); 
+#define PRT_DETAIL_INFO( _i ) \
+	do { \
+		printf( "[ 명함 %c ]\n" \
+				"명함 ID : %d\n" \
+				"이름 : %s\n" \
+				"회사 : %s\n" \
+				"부서 : %s\n" \
+				"직위 : %c\n" \
+				"직책 : %c\n" \
+				"휴대전화 : %s\n" \
+				"유선전화 : %s\n" \
+				"이메일 : %s\n\n", \
+				(_i).ucCnt, (_i).unCardId, (_i).szName, \
+				(_i).szCompany, (_i).szTeam, (_i).ucPosition, \
+				(_i).ucTitle, (_i).szMobile, (_i).szTel, (_i).szEmail ); \
+		} while ( 0 );
+
+#define PRT_SIMPLE_INFO( _i ) \
+	do { \
+		printf( "[ 명함 %c ]\n" \
+				"명함 ID : %d\n" \
+				"이름 : %s\n" \
+				"회사 : %s\n" \
+				"휴대전화 : %s\n", \
+				(_i).ucCnt, (_i).unCardId, (_i).szName, \
+				(_i).szCompany, (_i).szMobile ); \
+		} while ( 0 );
 
 #define STR_TO_INT( _a, _b ) \
 	do { \
-		if ( EMPTY_INPUT != strlen(_a) ) \
+		if ( CS_EMPTY_INPUT != strlen(_a) ) \
 		{ \
 			if ( 0 == (int)strtol(_a, NULL, 0) ) \
 			{ \

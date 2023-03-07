@@ -7,29 +7,23 @@ int TASK_Login()
 {
 	int nRC = 0, nPos = 0;
 
-	/* Request  */
-	CS_Header_t tReqHeader;
-	CS_LoginReqData_t tLoginReqData;
-	unsigned char ucReqBuf[CS_REQ_BUF_LEN];
+	CS_LoginReqData_t tLoginReqData; //Client에게 입력받은 데이터
+	CS_Header_t tReqHeader; //Request 메시지 헤더
+	unsigned char ucReqBuf[CS_REQ_BUF_LEN]; //Request 메시지 총 버퍼
 
-	memset( &tReqHeader, 0x00, sizeof(tReqHeader) );
+	unsigned char ucResHeaderBuf[CS_RES_HEADER_BUF_LEN]; //Response 메시지 헤더 버퍼
+	CS_Header_t tResHeader; //Response 메시지 헤더 저장할 구조체
+	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN]; //Response 메시지 바디 버퍼
+	CS_ResBody_t tResBody; //Response 메시지 바디 저장할 구조체
+	
 	memset( &tLoginReqData, 0x00, sizeof(tLoginReqData) );
 	memset( ucReqBuf, 0x00, sizeof(ucReqBuf) );
-
-	/* Response */
-	unsigned char ucResHeaderBuf[CS_RES_HEADER_BUF_LEN];
-	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN];
-	CS_Header_t tResHeader;
-	CS_ResBody_t tResBody;
-	
+	memset( &tReqHeader, 0x00, sizeof(tReqHeader) );
 	memset( ucResHeaderBuf, 0x00, sizeof(ucResHeaderBuf) );
-	memset( ucResBodyBuf, 0x00, sizeof(ucResBodyBuf) );
 	memset( &tResHeader, 0x00, sizeof(tResHeader) );
+	memset( ucResBodyBuf, 0x00, sizeof(ucResBodyBuf) );
 	memset( &tResBody, 0x00, sizeof(tResBody) );
 
-	/**************/
-	/* Input Data */
-	/**************/
 	PRT_TITLE( "Login" );	
 	do
 	{
@@ -40,7 +34,7 @@ int TASK_Login()
 			return CS_rErrClientServerFail;
 		}
 	} while ( NULL != strchr(tLoginReqData.szLoginId, CS_SPACE) ||
-			  EMPTY_INPUT == strlen(tLoginReqData.szLoginId) );
+			  CS_EMPTY_INPUT == strlen(tLoginReqData.szLoginId) );
 
 	if ( 0 == strcmp( tLoginReqData.szLoginId, "exit" ) )
 	{
@@ -57,13 +51,14 @@ int TASK_Login()
 		}
 		
 	} while ( NULL != strchr(tLoginReqData.szLoginPw, CS_SPACE) ||
-			  EMPTY_INPUT == strlen(tLoginReqData.szLoginPw) );
+			  CS_EMPTY_INPUT == strlen(tLoginReqData.szLoginPw) );
 
 	printf( "\n%s/%s\n", tLoginReqData.szLoginId, tLoginReqData.szLoginPw ); 
 
-	/*******************/
-	/* Request Message */
-	/*******************/
+	/*
+	 *	Request Message for 'Login'
+	 */
+
 	tReqHeader.ucMsgType = CS_MSG_LOGIN_REQ;
 
 	nRC = ENCDEC_EncodingHeader( ucReqBuf, sizeof(ucReqBuf), &tReqHeader );
@@ -93,11 +88,9 @@ int TASK_Login()
 	encdec_SetBodyLen( ucReqBuf, nPos - CS_RES_HEADER_BUF_LEN );	
 	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
 
-#ifdef DEBUG
-	PRT_TITLE( "Login Request" )
+	PRT_TITLE( "Request" )
 	UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
 	PRT_LF;
-#endif
 
 #ifdef SIM
 	SIM_Login( ucResHeaderBuf, ucResBodyBuf );
@@ -111,9 +104,10 @@ int TASK_Login()
 		return CS_rErrWriteFail;
 	}
 
-	/********************/
-	/* Response Message */
-	/********************/
+	/*
+	 *	Response Message for 'Login'
+	 */
+
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( 0 > nRC )
 	{
@@ -138,7 +132,7 @@ int TASK_Login()
 	}
 #endif
 
-	PRT_TITLE( "Login Response" );
+	PRT_TITLE( "Response" );
 	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	UTIL_PrtBuf( ucResBodyBuf, tResHeader.unBodyLen );
 
@@ -153,17 +147,14 @@ int TASK_Login()
 	{
 		case CS_RC_SUCCESS:
 		{
-			g_tEnv.ulSessionId = tResBody.u.ulSessionId;
-			PRT_TITLE( "Success" );
-			printf( "Session ID = %ld\n", g_tEnv.ulSessionId );
-
-			//TODO Session ID byteordering
+			//g_tEnv.ulSessionId = tResBody.u.ulSessionId;
+			g_tEnv.ulSessionId = 1004; //TODO
+			printf( "\nSession ID = %016lx\n", g_tEnv.ulSessionId );
 		}
 			break;
 		case CS_RC_FAIL:
 		{
-			PRT_TITLE( "Fail" );
-			printf( "Error Code = %02x\n", tResBody.u.ucErrCode );
+			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
 			return CS_rErrLoginFail;
 		}
 			break;
@@ -174,8 +165,6 @@ int TASK_Login()
 		}
 			break;
 	}
-
-	//RES_FIELD_MASK TODO
 
 	return CS_rOk;
 }
@@ -233,7 +222,16 @@ int TASK_Menu()
 					break;
 				case MENU_LOGOUT:
 				{
-					PRT_TITLE( "Logout" );
+					PRT_TITLE( "Logout(no input)" );
+				
+					nRC = MENU_Logout();
+					if ( CS_rOk != nRC )
+					{
+						LOG_ERR_F( "MENU_Logout fail <%d>", nRC );
+						return nRC;
+					}
+
+					return CS_rBackToLogin;
 				}
 					break;
 				case MENU_ADMIN:

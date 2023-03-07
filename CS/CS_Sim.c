@@ -15,48 +15,176 @@ void SIM_Login( unsigned char *pucHeader, unsigned char *pucBody )
 	a[1] = 0x00;
 	a[2] = 0x00;
 	a[3] = 0x00;
-	a[4] = 0x0f; //fail:0x08, success:0x0f
+	a[4] = 0x0f; //fail:0x08, success:0x0f(15)
 
-	unsigned char RC_Tag = CS_TAG_RESULT_CODE;
-	unsigned short RC_Length = sizeof(unsigned char);
-	unsigned char RC_Value = CS_RC_SUCCESS;
-	
-	b[n] = RC_Tag;
-	n++;
-	nRC = encdec_EncodingShort( &b[n], CS_RES_BODY_BUF_LEN - n, RC_Length );
-	if ( 0 > nRC )
-	{
-		LOG_ERR_F( "encdec_EncodingShort fail <%d>", nRC );
-	}
-	n += nRC;
-	b[n] = RC_Value;
-	n++;
+	b[n++] = CS_TAG_RESULT_CODE;
+	b[n++] = 0x00;
+	b[n++] = CS_LEN_RESULT_CODE;
+	b[n++] = CS_RC_SUCCESS;
 
-	if ( CS_RC_SUCCESS == RC_Value )
+	unsigned char Result = CS_RC_SUCCESS;
+
+	if ( CS_RC_SUCCESS == Result )
 	{
-		unsigned char SID_Tag = CS_TAG_SESSION_ID;
-		unsigned short SID_Length = sizeof(unsigned long);
+		b[n++] = CS_TAG_SESSION_ID;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_SESSION_ID;
+		b[n++] = 0x01;
+		b[n++] = 0x02;
+		b[n++] = 0x03;
+		b[n++] = 0x04;
+		b[n++] = 0x05;
+		b[n++] = 0x06;
+		b[n++] = 0x07;
+		b[n++] = 0x08;
+/*
 		unsigned long SID_Value = 1004; //0x03ec //11 1110 1100
-		
-		b[n] = SID_Tag;
-		n++;
-		nRC = encdec_EncodingShort( &b[n], CS_RES_BODY_BUF_LEN - n, SID_Length );
-		n += nRC;
 		nRC = encdec_EncodingLong( &b[n], CS_RES_BODY_BUF_LEN - n, SID_Value );
-		n += nRC;
+		n += nRC;*/
 	}
-	else if ( CS_RC_FAIL == RC_Value )
+	else if ( CS_RC_FAIL == Result )
 	{
-		unsigned char EC_Tag = CS_TAG_ERR_CODE;
-		unsigned short EC_Length = sizeof(unsigned char);
-		unsigned char EC_Value = CS_EC_UNDEFINED_ERR;
+		b[n++] = CS_TAG_ERR_CODE;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_ERR_CODE;
+		b[n++] = CS_EC_UNDEFINED_ERR;
+	}
+	
+	b[n] = '\0';
+}
 
-		b[n] = EC_Tag;
+void SIM_Create( unsigned char *pucHeader, unsigned char *pucBody )
+{
+	unsigned char *a;
+	unsigned char *b;
+	int nRC = 0, n = 0;
+
+	a = pucHeader;
+	b = pucBody;
+
+	a[0] = CS_MSG_CREATE_RES;
+	a[1] = 0x00;
+	a[2] = 0x00;
+	a[3] = 0x00;
+	a[4] = 0x0b; //fail:0x08, success:0x0b (11)
+
+	b[n++] = CS_TAG_RESULT_CODE;
+	b[n++] = 0x00;
+	b[n++] = CS_LEN_RESULT_CODE;
+	b[n++] = CS_RC_SUCCESS;
+
+	unsigned char Result = CS_RC_SUCCESS;
+
+	if ( CS_RC_SUCCESS == Result )
+	{
+		b[n++] = CS_TAG_CARD_ID;
+		b[n++] = 0x00;
+		b[n++] = 0x04;
+		b[n++] = 0x00;
+		b[n++] = 0x00;
+		b[n++] = 0x01;
+		b[n++] = 0x4d;
+	}
+	else if ( CS_RC_FAIL == Result )
+	{
+		b[n++] = CS_TAG_ERR_CODE;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_ERR_CODE;
+		b[n++] = CS_EC_UNDEFINED_ERR;
+	}
+	
+	b[n] = '\0';
+}
+
+void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
+{
+	unsigned char *a;
+	unsigned char *b;
+
+	a = pucHeader;
+	b = pucBody;
+
+	int nRC = 0, n = 0;
+
+	a[0] = CS_MSG_SEARCH_RES;
+	a[1] = 0x00;
+	a[2] = 0x00;
+	a[3] = 0x00;
+	a[4] = 0x09; //fail:0x08, success:0x0b
+
+	b[n++] = CS_TAG_RESULT_CODE;
+	b[n++] = 0x00;
+	b[n++] = CS_LEN_RESULT_CODE;
+	b[n++] = CS_RC_SUCCESS;
+
+	unsigned char Result = CS_RC_SUCCESS;
+
+	if ( CS_RC_SUCCESS == Result )
+	{
+		b[n++] = CS_TAG_TOTAL_CNT;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_TOTAL_CNT;
+		b[n++] = 0x00;
+		b[n++] = 0x01;
+		b[n++] = CS_TAG_CNT;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_CNT;
+		b[n++] = 0x01;
+		b[n++] = CS_TAG_NAME;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_NAME;
+		int i = 0;
+		for ( i = n; i < CS_LEN_NAME; i++ )
+			b[i] = 0x2a;
 		n++;
-		nRC = encdec_EncodingShort( &b[n], CS_RES_BODY_BUF_LEN - n, EC_Length );
-		n += nRC;
-		b[n] = EC_Value;
-		n++;
+	}
+	else if ( CS_RC_FAIL == Result )
+	{
+		b[n++] = CS_TAG_ERR_CODE;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_ERR_CODE;
+		b[n++] = CS_EC_UNDEFINED_ERR;
+	}
+	
+	b[n] = '\0';
+}
+
+void SIM_Delete( unsigned char *pucHeader, unsigned char *pucBody )
+{
+}
+
+void SIM_Logout( unsigned char *pucHeader, unsigned char *pucBody )
+{
+	unsigned char *a;
+	unsigned char *b;
+
+	a = pucHeader;
+	b = pucBody;
+
+	int nRC = 0, n = 0;
+
+	a[0] = CS_MSG_LOGOUT_RES;
+	a[1] = 0x00;
+	a[2] = 0x00;
+	a[3] = 0x00;
+	a[4] = 0x04; //fail:0x08, success:0x04
+
+	b[n++] = CS_TAG_RESULT_CODE;
+	b[n++] = 0x00;
+	b[n++] = CS_LEN_RESULT_CODE;
+	b[n++] = CS_RC_SUCCESS;
+
+	unsigned char Result = CS_RC_SUCCESS;
+
+	if ( CS_RC_SUCCESS == Result )
+	{
+	}
+	else if ( CS_RC_FAIL == Result )
+	{
+		b[n++] = CS_TAG_ERR_CODE;
+		b[n++] = 0x00;
+		b[n++] = CS_LEN_ERR_CODE;
+		b[n++] = CS_EC_UNDEFINED_ERR;
 	}
 	
 	b[n] = '\0';

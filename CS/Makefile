@@ -1,4 +1,4 @@
-CC = gcc -DDEBUG -DSIM #컴파일러
+CC = gcc -DSIM #컴파일러
 CFLAGS = -W -Wall -g #컴파일 옵션 세팅
 # -D[매크로]
 # -D[매크로]=[매크로값]

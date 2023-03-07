@@ -1,6 +1,16 @@
 /* CS_Util.c */
 #include "CS_Inc.h"
 
+int UTIL_IsBigEndian()
+{
+	union {
+		uint32_t i;
+		char c[4];
+	} e = { 0x01000000 };
+
+	return e.c[0];
+}
+
 void UTIL_ClearStdin( char *pszBuf )
 {
 	if ( NULL == pszBuf )

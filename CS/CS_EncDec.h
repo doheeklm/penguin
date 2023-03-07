@@ -2,7 +2,8 @@
 #ifndef _CS_ENCDEC_H_
 #define _CS_ENCDEC_H_
 
-#define CS_REQ_BUF_LEN			512
+#define CS_EMPTY_INPUT			0
+#define CS_REQ_BUF_LEN			200
 #define CS_RES_HEADER_BUF_LEN	5
 #define CS_RES_BODY_BUF_LEN		512
 
@@ -17,6 +18,8 @@
 #define CS_LEN_NAME				20
 #define CS_LEN_COMPANY			20
 #define CS_LEN_MOBILE			11
+#define CS_LEN_POSITION			1
+#define CS_LEN_TITLE			1
 #define CS_LEN_TEL				11
 #define CS_LEN_TEAM				30
 #define CS_LEN_TOTAL_CNT		2
@@ -44,52 +47,53 @@ typedef enum _CS_FieldMask_e
 	CS_FIELD_MASK_CNT			= 0x2000
 } CS_FieldMask_e;
 
-#define SET_MASK( p_mask, _data_mask, _data ) \
+#define CS_SET_MASK( p_mask, _data_mask, _data ) \
 	do { \
-		if ( EMPTY_INPUT != strlen(_data) ) \
+		if ( CS_EMPTY_INPUT != strlen(_data) ) \
 		{ \
 			*(p_mask) |= (_data_mask); \
 		} \
 	} while ( 0 );
 
-#define SET_MASK_( p_mask, _data_mask, _data ) \
+#define CS_SET_MASK_( p_mask, _data_mask, _data ) \
 	do { \
-		if ( EMPTY_INPUT != (_data) ) \
+		if ( CS_EMPTY_INPUT != (_data) ) \
 		{ \
 			*(p_mask) |= (_data_mask); \
 		} \
 	} while ( 0 );
 
-#define SET_MASK_CREATE_REQ( p_mask, _data ) \
+#define CS_SET_MASK_CREATE_REQ( p_mask, _data ) \
 	do { \
-		SET_MASK( p_mask, CS_FIELD_MASK_NAME, (_data).szName ); \
-		SET_MASK( p_mask, CS_FIELD_MASK_COMPANY, (_data).szCompany ); \
-		SET_MASK( p_mask, CS_FIELD_MASK_TEAM, (_data).szTeam ); \
-		SET_MASK_( p_mask, CS_FIELD_MASK_POSITION, (_data).ucPosition ); \
-		SET_MASK_( p_mask, CS_FIELD_MASK_TITLE, (_data).ucTitle ); \
-		SET_MASK( p_mask, CS_FIELD_MASK_MOBILE, (_data).szMobile ); \
-		SET_MASK( p_mask, CS_FIELD_MASK_TEL, (_data).szTel ); \
-		SET_MASK( p_mask, CS_FIELD_MASK_EMAIL, (_data).szEmail ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_NAME, (_data).szName ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_COMPANY, (_data).szCompany ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_TEAM, (_data).szTeam ); \
+		CS_SET_MASK_( p_mask, CS_FIELD_MASK_POSITION, (_data).ucPosition ); \
+		CS_SET_MASK_( p_mask, CS_FIELD_MASK_TITLE, (_data).ucTitle ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_MOBILE, (_data).szMobile ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_TEL, (_data).szTel ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_EMAIL, (_data).szEmail ); \
 	} while ( 0 );
 
-#define SET_MASK_SEARCH_DELETE_REQ( p_mask, _data ) \
+#define CS_SET_MASK_SEARCH_DELETE_REQ( p_mask, _data ) \
 	do { \
-		SET_MASK( p_mask, CS_FIELD_MASK_NAME, (_data).szName ); \
-		SET_MASK( p_mask, CS_FIELD_MASK_COMPANY, (_data).szCompany ); \
-		SET_MASK_( p_mask, CS_FIELD_MASK_CARD_ID, (_data).unCardId ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_NAME, (_data).szName ); \
+		CS_SET_MASK( p_mask, CS_FIELD_MASK_COMPANY, (_data).szCompany ); \
+		CS_SET_MASK_( p_mask, CS_FIELD_MASK_CARD_ID, (_data).unCardId ); \
 	} while ( 0 );
 
 #define CS_FIELD_MASK_FAIL_RES		(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_ERR_CODE)
 #define CS_FIELD_MASK_LOGIN_RES		(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_SESSION_ID)
 #define CS_FIELD_MASK_CREATE_RES	(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_CARD_ID)
 #define CS_FIELD_MASK_SEARCH_RES	(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_TOTAL_CNT| \
-									 CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID|CS_FIELD_MASK_NAME| \
-									 CS_FIELD_MASK_COMPANY|CS_FIELD_MASK_TEAM|CS_FIELD_MASK_POSITION| \
+									 CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID| \
+									 CS_FIELD_MASK_NAME|CS_FIELD_MASK_COMPANY| \
+									 CS_FIELD_MASK_TEAM|CS_FIELD_MASK_POSITION| \
 									 CS_FIELD_MASK_MOBILE|CS_FIELD_MASK_EMAIL)
-									//Optional: CS_FIELD_MASK_TITLE, CS_FIELD_MASK_TEL
 #define CS_FIELD_MASK_DELETE_RES	(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_TOTAL_CNT| \
 									 CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID| \
-									 CS_FIELD_MASK_NAME|CS_FIED_MASK_COMPNAY|CS_FIELD_MASK_TEL)
+									 CS_FIELD_MASK_NAME|CS_FIELD_MASK_COMPANY|CS_FIELD_MASK_TEL)
+
 /* Message Type */
 typedef enum _CS_MsgType_e
 {
@@ -183,29 +187,6 @@ typedef enum _CS_Tag_e
 
 #pragma pack(push, 1)
 
-typedef struct
-{
-	unsigned int			unCnt;
-	unsigned int			unCardId;
-	char					szName[CS_LEN_NAME + 1];
-	char					szCompany[CS_LEN_COMPANY + 1];
-	char					szTeam[CS_LEN_TEAM + 1];
-	unsigned char			ucPosition;
-	unsigned char			ucTitle;
-	char					szMobile[CS_LEN_MOBILE + 1];
-	char					szTel[CS_LEN_TEL + 1];
-	char					szEmail[CS_LEN_EMAIL + 1];
-} CS_DetailInfo_t;
-
-typedef struct
-{
-	unsigned int			unCnt;
-	unsigned int			unCardId;
-	char					szName[CS_LEN_NAME + 1];
-	char					szCompany[CS_LEN_COMPANY + 1];
-	char					szMobile[CS_LEN_MOBILE + 1];
-} CS_SimpleInfo_t;
-
 /**************************************************/
 /*                     HEADER                     */
 /**************************************************/
@@ -248,6 +229,29 @@ typedef struct
 /**************************************************/
 typedef struct
 {
+	unsigned char			ucCnt;
+	unsigned int			unCardId;
+	char					szName[CS_LEN_NAME + 1];
+	char					szCompany[CS_LEN_COMPANY + 1];
+	char					szTeam[CS_LEN_TEAM + 1];
+	unsigned char			ucPosition;
+	unsigned char			ucTitle;
+	char					szMobile[CS_LEN_MOBILE + 1];
+	char					szTel[CS_LEN_TEL + 1];
+	char					szEmail[CS_LEN_EMAIL + 1];
+} CS_DetailInfo_t;
+
+typedef struct
+{
+	unsigned char			ucCnt;
+	unsigned int			unCardId;
+	char					szName[CS_LEN_NAME + 1];
+	char					szCompany[CS_LEN_COMPANY + 1];
+	char					szMobile[CS_LEN_MOBILE + 1];
+} CS_SimpleInfo_t;
+
+typedef struct
+{
 	unsigned short			usTotalCnt;
 	CS_DetailInfo_t			tDetailInfo[CS_MAX_INFO];
 } CS_SearchResData_t;
@@ -273,9 +277,10 @@ typedef struct
 
 #pragma pack(pop)
 
-/**************************************************/
-/*                    ENCODING                    */
-/**************************************************/
+/*
+ *	Encoding
+ */
+
 int ENCDEC_EncodingHeader( unsigned char *pucBuf, int nBufLen, CS_Header_t *ptHeader );
 int ENCDEC_EncodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_LoginReqData_t *ptLoginReqData );
 int ENCDEC_EncodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_CreateReqData_t *ptCreateReqData, unsigned short usBitmask );
@@ -296,29 +301,24 @@ int encdec_EncodingShort( unsigned char *pucBuf, int nBufLen, unsigned short usD
 int encdec_EncodingInt( unsigned char *pucBuf, int nBufLen, unsigned int unData );
 int encdec_EncodingLong( unsigned char *pucBuf, int nBufLen, unsigned long ulData );
 
-/**************************************************/
-/*                    DECODING                    */
-/**************************************************/
+/*
+ *	Decoding
+ */
+
 int ENCDEC_DecodingHeader( unsigned char *pucBuf, CS_Header_t *ptHeader );
 int ENCDEC_DecodingBody( unsigned char *pucBuf, CS_Header_t tHeader, CS_ResBody_t *ptResBody );
 
 int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
+int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
+int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
+int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
+int ENCDEC_DecodingLogoutBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
 
+int encdec_DecodingString( unsigned char *pucBuf, char *pszData, int nStrMaxLen );
 int encdec_DecodingOneByte( unsigned char *pucBuf, unsigned char *pucData ); 
 int encdec_DecodingShort( unsigned char *pucBuf, unsigned short *pusData );
+int encdec_DecodingInt( unsigned char *pucBuf, unsigned int *punData );
 int encdec_DecodingLong( unsigned char *pucBuf, unsigned long *pulData );
-int encdec_DecodingString( unsigned char *pucBuf, char *pszData, int nStrMaxLen );
 
-/*
-
-int ENCDEC_DecodingCreateBody	( unsigned char *pucBodyBuf, int nBufLen, Res_t *ptRes );
-int ENCDEC_DecodingSearchBody	( unsigned char *pucBodyBuf, int nBufLen, Res_t *ptRes );
-int ENCDEC_DecodingDeleteBody	( unsigned char *pucBodyBuf, int nBufLen, Res_t *ptRes );
-int ENCDEC_DecodingLogoutBody	( unsigned char *pucBodyBuf, int nBufLen, Res_t *ptRes );
-
-int encdec_DecodingInt			( unsigned char *pucBodyBuf, unsigned int *punData );
-int encdec_DecodingString		( unsigned char *pucBodyBuf, char *pszData );
-int encdec_DecodingLong( unsigned char *pucBuf, unsigned long *pulData );
-*/
 
 #endif /* _CS_ENCDEC_H_ */

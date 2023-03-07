@@ -30,7 +30,7 @@ typedef struct
 	char			szIp[16];
 	int				nPort;
 	int				nClientFd;
-	unsigned long 	ulSessionId;
+	long 	ulSessionId;
 } CS_Env_t;
 
 #endif /* _CS_INC_H_ */

@@ -33,7 +33,7 @@ int CONF_Init( int nArg, char *pszPort, char *pszIp )
 		g_tEnv.nPort = atoi(pszPort);
 	}
 
-	printf( "Server Ip[%s] Port[%d]\n", g_tEnv.szIp, g_tEnv.nPort );	
+	printf( "Server Ip[%s] Port[%d]", g_tEnv.szIp, g_tEnv.nPort );	
 
 	return CS_rOk;
 }

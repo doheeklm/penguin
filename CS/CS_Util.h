@@ -2,6 +2,8 @@
 #ifndef _CS_UTIL_H_
 #define _CS_UTIL_H_
 
+int UTIL_IsBigEndian();
+
 void UTIL_ClearStdin( char *pszBuf );
 void UTIL_ClearLine();
 

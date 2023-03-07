@@ -13,7 +13,7 @@ int SOCK_Init()
 	if ( -1 == g_tEnv.nClientFd )
 	{
 		fprintf( stderr, "%s:: socket fail <%d:%s>\n", __func__, errno, strerror(errno) );
-		return CS_rErrSocketInit;
+		return CS_rErrSocketFail;
 	}
 
 	printf( "%s:: socket fd[%d] created\n", __func__, g_tEnv.nClientFd );
@@ -23,48 +23,44 @@ int SOCK_Init()
 	if ( -1 == tSockAddr.sin_port )
 	{
 		fprintf( stderr, "%s:: htons fail <%d:%s>\n", __func__, errno, strerror(errno) );
-		goto end_of_function;
+		return CS_rErrFail;
 	}
 
 	tSockAddr.sin_addr.s_addr = inet_addr( g_tEnv.szIp ); //서버 주소
 	if ( INADDR_NONE == tSockAddr.sin_addr.s_addr )
 	{
 		fprintf( stderr, "%s:: inet_addr fail <%d:%s>\n", __func__, errno, strerror(errno) );
-		goto end_of_function;
+		return CS_rErrFail;
 	}
 
 	nRC = connect( g_tEnv.nClientFd, (struct sockaddr*)&tSockAddr, sizeof(tSockAddr) );	
 	if ( -1 == nRC );
 	{
 		fprintf( stderr, "%s:: connect fail <%d:%s>\n", __func__, errno, strerror(errno) );
-		goto end_of_function;
+		return CS_rErrFail;
 	}
 
 	return CS_rOk;
-
-end_of_function:
-	FD_CLOSE( g_tEnv.nClientFd );
-	return CS_rErrSocketInit;
 }
 
 int SOCK_Write( unsigned char *pucBuf, int nBufLen )
 {
 	CHECK_PARAM_RC( pucBuf );
 
-	int nByte = 0, nWritten = 0;
+	int nByte = 0, nCurrent = 0;
 
 	while ( 1 )
 	{
-		nByte = write( g_tEnv.nClientFd, pucBuf + nWritten, nBufLen - nWritten );
+		nByte = write( g_tEnv.nClientFd, pucBuf + nCurrent, nBufLen - nCurrent );
 		if ( -1 == nByte )
 		{
 			fprintf( stderr, "%s:: write fail <%d:%s>\n", __func__, errno, strerror(errno) );
 			return nByte;
 		}
 
-		nWritten += nByte;
+		nCurrent += nByte;
 
-		if ( nWritten >= nBufLen )
+		if ( nCurrent >= nBufLen )
 		{
 			printf( "write all\n" );
 			break;
@@ -78,11 +74,11 @@ int SOCK_Read( unsigned char *pucBuf, int nBufLen )
 {
 	CHECK_PARAM_RC( pucBuf );
 
-	int nByte = 0;	
+	int nByte = 0, nCurrent = 0;	
 
 	while ( 1 )
 	{
-		nByte = read( g_tEnv.nClientFd, pucBuf, nBufLen );
+		nByte = read( g_tEnv.nClientFd, pucBuf + nCurrent, nBufLen - nCurrent );
 		if ( -1 == nByte )
 		{
 			fprintf( stderr, "%s:: read fail <%d:%s>\n", __func__, errno, strerror(errno) );
@@ -90,13 +86,15 @@ int SOCK_Read( unsigned char *pucBuf, int nBufLen )
 		}
 		else if ( 0 == nByte )
 		{
-			printf( "read EOF\n" );
+			printf( "read End-Of-File\n" );
 			break;
 		}
 
-		if ( nByte >= nBufLen )
+		nCurrent += nByte;
+
+		if ( nCurrent >= nBufLen )
 		{
-			printf( "test\n" );
+			printf( "read all\n" );
 			break;
 		}
 	}

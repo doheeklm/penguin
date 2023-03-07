@@ -3,6 +3,10 @@
 
 extern CS_Env_t g_tEnv;
 
+/*
+ *	Encoding
+ */
+
 int ENCDEC_EncodingHeader( unsigned char *pucBuf, int nBufLen, CS_Header_t *ptHeader )
 {
 	CHECK_PARAM_RC( pucBuf );
@@ -594,6 +598,10 @@ int encdec_EncodingLong( unsigned char *pucBuf, int nBufLen, unsigned long ulDat
 	return sizeof(unsigned long);
 }
 
+/*
+ *	Decoding
+ */
+
 int ENCDEC_DecodingHeader( unsigned char *pucBuf, CS_Header_t *ptHeader )
 {
 	CHECK_PARAM_RC( pucBuf );
@@ -629,18 +637,42 @@ int ENCDEC_DecodingBody( unsigned char *pucBuf, CS_Header_t tHeader, CS_ResBody_
 			break;
 		case CS_MSG_CREATE_RES:
 		{
+			nRC = ENCDEC_DecodingCreateBody( pucBuf, (int)tHeader.unBodyLen, ptResBody );
+			if ( CS_rOk != nRC )
+			{
+				LOG_ERR_F( "ENCDEC_DecodingCreateBody fail <%d>", nRC );
+				return CS_rErrDecodingFail;
+			}
 		}
 			break;
 		case CS_MSG_SEARCH_RES:
 		{
+			nRC = ENCDEC_DecodingSearchBody( pucBuf, (int)tHeader.unBodyLen, ptResBody );
+			if ( CS_rOk != nRC )
+			{
+				LOG_ERR_F( "ENCDEC_DecodingSearchBody fail <%d>", nRC );
+				return CS_rErrDecodingFail;
+			}
 		}
 			break;
 		case CS_MSG_DELETE_RES:
 		{
+			nRC = ENCDEC_DecodingDeleteBody( pucBuf, (int)tHeader.unBodyLen, ptResBody );
+			if ( CS_rOk != nRC )
+			{
+				LOG_ERR_F( "ENCDEC_DecodingDeleteBody fail <%d>", nRC );
+				return CS_rErrDecodingFail;
+			}
 		}
 			break;
 		case CS_MSG_LOGOUT_RES:
 		{
+			nRC = ENCDEC_DecodingLogoutBody( pucBuf, (int)tHeader.unBodyLen, ptResBody );
+			if ( CS_rOk != nRC )
+			{
+				LOG_ERR_F( "ENCDEC_DecodingLogoutBody fail <%d>", nRC );
+				return CS_rErrDecodingFail;
+			}
 		}
 			break;
 	}
@@ -655,7 +687,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 
 	int nRC = 0, nPos = 0;
 	unsigned short usLength = 0;
-	unsigned short usFieldMask = 0;
+	unsigned short usBitmask = 0;
 
 	while ( nPos < nBufLen )
 	{
@@ -681,7 +713,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 			}
 			nPos += nRC;
 		
-			usFieldMask |= CS_FIELD_MASK_RESULT_CODE;
+			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
 		}
 		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
 		{
@@ -705,7 +737,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 			}
 			nPos += nRC;
 
-			usFieldMask |= CS_FIELD_MASK_ERR_CODE;
+			usBitmask |= CS_FIELD_MASK_ERR_CODE;
 		}
 		else if ( CS_TAG_SESSION_ID == pucBuf[nPos] )
 		{
@@ -721,7 +753,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 
 			CHECK_TLV_LENGTH( CS_LEN_SESSION_ID, usLength );
 
-			nRC = encdec_DecodingLong( &pucBuf[nPos], &(ptResBody->u.ulSessionId) );
+			nRC = encdec_DecodingLong( &pucBuf[nPos], &(ptResBody->u.ulSessionId) ); 
 			if ( 0 > nRC )
 			{
 				LOG_ERR_F( "encdec_DecodingLong fail <%d>", nRC );
@@ -729,23 +761,806 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 			}
 			nPos += nRC;
 
-			usFieldMask |= CS_FIELD_MASK_SESSION_ID;
+			usBitmask |= CS_FIELD_MASK_SESSION_ID;
 		}
 		else
 		{
-			LOG_ERR_F( "system fail(invalid tag/too small bodylen/too large bodylen)" );
+			LOG_ERR_F( "system fail <(invalid tag)/(too small bodylen)/(too large bodylen)>" );
+			return CS_rErrSystemFail;
+		}
+	}
+
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
+		 (CS_FIELD_MASK_LOGIN_RES != usBitmask) )
+	{
+		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
+		return CS_rErrWrongResponse;
+	}
+	return CS_rOk;
+}
+
+int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_PARAM_RC( ptResBody );
+
+	int nRC = 0, nPos = 0;
+	unsigned short usLength = 0;
+	unsigned short usBitmask = 0;
+
+	while ( nPos < nBufLen )
+	{
+		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_RESULT_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->ucResultCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+		
+			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
+		}
+		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_ERR_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.ucErrCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_ERR_CODE;
+		}
+		else if ( CS_TAG_CARD_ID == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_CARD_ID, usLength );
+
+			nRC = encdec_DecodingInt( &pucBuf[nPos], &(ptResBody->u.unCardId) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingInt fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_CARD_ID;
+		}
+		else
+		{
+			LOG_ERR_F( "system fail <(invalid tag)/(too small bodylen)/(too large bodylen)>" );
+			return CS_rErrSystemFail;
+		}
+	}
+
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
+		 (CS_FIELD_MASK_CREATE_RES != usBitmask) )
+	{
+		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
+		return CS_rErrWrongResponse;
+	}
+
+	return CS_rOk;
+}
+
+int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_PARAM_RC( ptResBody );
+
+	int nRC = 0, nPos = 0, nCnt = -1;
+	unsigned short usLength = 0;
+	unsigned short usBitmask = 0;
+
+	while ( nPos < nBufLen )
+	{
+		/* 1. Result Code */
+		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_RESULT_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->ucResultCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+		
+			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
+		}
+		/* 2. Err Code */
+		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_ERR_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.ucErrCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_ERR_CODE;
+		}
+		/* 3. Total Cnt */
+		else if ( CS_TAG_TOTAL_CNT == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_TOTAL_CNT, usLength );
+
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &(ptResBody->u.tSearchResData.usTotalCnt) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_TOTAL_CNT;
+		}
+		/* 4. Cnt */
+		else if ( CS_TAG_CNT == pucBuf[nPos] )
+		{
+			nCnt++;
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].ucCnt) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_CNT;
+		}
+		/* 5. Card Id */
+		else if ( CS_TAG_CARD_ID == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
+
+			nRC = encdec_DecodingInt( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].unCardId) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingInt fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_CARD_ID;
+		}
+		/* 6. Name */
+		else if ( CS_TAG_NAME == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_NAME, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szName, CS_LEN_NAME );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_NAME;
+		}
+		/* 7. Company */
+		else if ( CS_TAG_COMPANY == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_COMPANY, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szCompany, CS_LEN_COMPANY );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_COMPANY;
+		}
+		/* 8. Team */
+		else if ( CS_TAG_TEAM == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_TEAM, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szTeam, CS_LEN_TEAM );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_TEAM;
+		}
+		/* 9. Position */
+		else if ( CS_TAG_POSITION == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_POSITION, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].ucPosition) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_POSITION;
+		}
+		/* 10. Title (Optional - No bit check) */
+		else if ( CS_TAG_TITLE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_TITLE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].ucTitle) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+		}
+		/* 11. Mobile */
+		else if ( CS_TAG_MOBILE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_MOBILE, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szMobile, CS_LEN_MOBILE );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_MOBILE;
+		}
+		/* 12. Tel */
+		else if ( CS_TAG_TEL == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_TEL, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szTel, CS_LEN_TEL );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+		}
+		/* 13. Email */
+		else if ( CS_TAG_EMAIL == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_EMAIL, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szEmail, CS_LEN_EMAIL );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_EMAIL;
+		}
+		else
+		{
+			LOG_ERR_F( "system fail <(invalid tag)/(too small bodylen)/(too large bodylen)>" );
+			return CS_rErrSystemFail;
+		}
+	}
+
+	nCnt += 2;
+	if ( nCnt != ptResBody->u.tSearchResData.usTotalCnt )
+	{
+		LOG_ERR_F( "nCnt(%d) != usTotalCnt(%d)", nCnt, ptResBody->u.tSearchResData.usTotalCnt );
+		return CS_rErrSystemFail;
+	}
+
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
+		 (CS_FIELD_MASK_SEARCH_RES != usBitmask) )
+	{
+		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
+		return CS_rErrWrongResponse;
+	}
+
+	return CS_rOk;
+}
+
+int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_PARAM_RC( ptResBody );
+
+	int nRC = 0, nPos = 0, nCnt = -1;
+	unsigned short usLength = 0;
+	unsigned short usBitmask = 0;
+
+	while ( nPos < nBufLen )
+	{
+		/* 1. Result Code */
+		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_RESULT_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->ucResultCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+		
+			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
+		}
+		/* 2. Err Code */
+		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_ERR_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.ucErrCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_ERR_CODE;
+		}
+		/* 3. Total Cnt */
+		else if ( CS_TAG_TOTAL_CNT == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_TOTAL_CNT, usLength );
+
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &(ptResBody->u.tDeleteResData.usTotalCnt) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_TOTAL_CNT;
+		}
+		/* 4. Cnt */
+		else if ( CS_TAG_CNT == pucBuf[nPos] )
+		{
+			nCnt++;
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].ucCnt) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_CNT;
+		}
+		/* 5. Card Id */
+		else if ( CS_TAG_CARD_ID == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
+
+			nRC = encdec_DecodingInt( &pucBuf[nPos], &(ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].unCardId) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingInt fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_CARD_ID;
+		}
+		/* 6. Name */
+		else if ( CS_TAG_NAME == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_NAME, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].szName, CS_LEN_NAME );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_NAME;
+		}
+		/* 7. Company */
+		else if ( CS_TAG_COMPANY == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_COMPANY, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].szCompany, CS_LEN_COMPANY );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_COMPANY;
+		}
+		/* 8. Mobile */
+		else if ( CS_TAG_MOBILE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			CHECK_TLV_LENGTH( CS_LEN_MOBILE, usLength );
+
+			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].szMobile, CS_LEN_MOBILE );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingString fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_MOBILE;
+		}
+		else
+		{
+			LOG_ERR_F( "system fail <(invalid tag)/(too small bodylen)/(too large bodylen)>" );
 			return CS_rErrSystemFail;
 		}
 	}
 	
-	if ( (CS_FIELD_MASK_FAIL_RES != usFieldMask) &&
-		 (CS_FIELD_MASK_LOGIN_RES != usFieldMask) )
+	nCnt += 2;
+	if ( nCnt != ptResBody->u.tDeleteResData.usTotalCnt )
 	{
-		LOG_ERR_F ( "missing tag" );
-		return CS_rErrMissingTag;
+		LOG_ERR_F( "nCnt(%d) != usTotalCnt(%d)", nCnt, ptResBody->u.tDeleteResData.usTotalCnt );
+		return CS_rErrSystemFail;
+	}
+
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
+		 (CS_FIELD_MASK_DELETE_RES != usBitmask) )
+	{
+		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
+		return CS_rErrWrongResponse;
 	}
 
 	return CS_rOk;
+}
+
+int ENCDEC_DecodingLogoutBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_PARAM_RC( ptResBody );
+
+	int nRC = 0, nPos = 0;
+	unsigned short usLength = 0;
+	unsigned short usBitmask = 0;
+
+	while ( nPos < nBufLen )
+	{
+		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_RESULT_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->ucResultCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+		
+			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
+		}
+		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
+		{
+			nPos++;
+			
+			nRC = encdec_DecodingShort( &pucBuf[nPos], &usLength );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingShort fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+	
+			CHECK_TLV_LENGTH( CS_LEN_ERR_CODE, usLength );
+
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.ucErrCode) );
+			if ( 0 > nRC )
+			{
+				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
+				return nRC;
+			}
+			nPos += nRC;
+
+			usBitmask |= CS_FIELD_MASK_ERR_CODE;
+		}
+		else
+		{
+			LOG_ERR_F( "system fail <(invalid tag)/(too small bodylen)/(too large bodylen)>" );
+			return CS_rErrSystemFail;
+		}
+	}
+
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
+		 (CS_FIELD_MASK_RESULT_CODE != usBitmask) )
+	{
+		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
+		return CS_rErrWrongResponse;
+	}
+
+	return CS_rOk;
+}
+
+int encdec_DecodingString( unsigned char *pucBuf, char *pszData, int nStrMaxLen )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_PARAM_RC( pszData );
+
+	int i = 0;
+
+	for ( i = 0; i < nStrMaxLen; i++ )
+	{
+		pszData[i] = pucBuf[i];
+	}
+
+	return nStrMaxLen;
 }
 
 int encdec_DecodingOneByte( unsigned char *pucBuf, unsigned char *pucData )
@@ -772,29 +1587,32 @@ int encdec_DecodingShort( unsigned char *pucBuf, unsigned short *pusData )
 	return sizeof(unsigned short);
 }
 
+int encdec_DecodingInt( unsigned char *pucBuf, unsigned int *punData )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_PARAM_RC( punData );
+
+	unsigned int *punTemp;
+	punTemp = (unsigned int *)pucBuf;
+	*punData = ntohl(*punTemp);
+
+	return sizeof(unsigned int);
+}
+
 int encdec_DecodingLong( unsigned char *pucBuf, unsigned long *pulData )
 {
 	CHECK_PARAM_RC( pucBuf );
 	CHECK_PARAM_RC( pulData );
 
+	int i = 0;
 	unsigned long *pulTemp;
 	pulTemp = (unsigned long *)pucBuf;
+	printf( "\nBefore byteordering(ntohl) : %16lx", *pulTemp );
+
 	*pulData = ntohl(*pulTemp);
+	printf( "\nAfter byteordering(ntohl) : %16lx", *pulData );
+
+	//TODO ntohl for 4byte long
 
 	return sizeof(unsigned long);
-}
-
-int encdec_DecodingString( unsigned char *pucBuf, char *pszData, int nStrMaxLen )
-{
-	CHECK_PARAM_RC( pucBuf );
-	CHECK_PARAM_RC( pszData );
-
-	int i = 0;
-
-	for ( i = 0; i < nStrMaxLen; i++ )
-	{
-		pszData[i] = pucBuf[i];
-	}
-
-	return nStrMaxLen;
 }
