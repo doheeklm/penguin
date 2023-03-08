@@ -147,19 +147,19 @@ void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
 	int nRC = 0, nPos = 0;
 	unsigned char Result = CS_RC_SUCCESS;
 
-	char name[CS_LEN_NAME + 1] = "dohee";
-	char company[CS_LEN_COMPANY + 1] = "telcoware";
-	char team[CS_LEN_TEAM + 1] = "infra1";
+	char name[CS_LEN_NAME + 1] = "dodo";
+	char company[CS_LEN_COMPANY + 1] = "tel;
+	char team[CS_LEN_TEAM + 1] = "core";
 	char mobile[CS_LEN_MOBILE + 1] = "01077779999";
 	char tel[CS_LEN_TEL + 1] = "023335555";
-	char email[CS_LEN_EMAIL + 1] = "dhkim@telcoware.com";
+	char email[CS_LEN_EMAIL + 1] = "deoewj@email.com";
 
-	char name1[CS_LEN_NAME + 1] = "heedo";
-	char company1[CS_LEN_COMPANY + 1] = "tel";
+	char name1[CS_LEN_NAME + 1] = "hee";
+	char company1[CS_LEN_COMPANY + 1] = "google";
 	char team1[CS_LEN_TEAM + 1] = "data";
 	char mobile1[CS_LEN_MOBILE + 1] = "01089219321";
 	char tel1[CS_LEN_TEL + 1] = "0315851111";
-	char email1[CS_LEN_EMAIL + 1] = "heedo@tel.com";
+	char email1[CS_LEN_EMAIL + 1] = "hee@email.com";
 	
 	nRC = ENCDEC_EncodingTLVOneByte( b, CS_RES_BODY_BUF_LEN, CS_TAG_RESULT_CODE, CS_LEN_RESULT_CODE, Result );
 	nPos += nRC;
