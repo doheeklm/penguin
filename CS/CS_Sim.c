@@ -148,7 +148,7 @@ void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
 	unsigned char Result = CS_RC_SUCCESS;
 
 	char name[CS_LEN_NAME + 1] = "dodo";
-	char company[CS_LEN_COMPANY + 1] = "tel;
+	char company[CS_LEN_COMPANY + 1] = "tel";
 	char team[CS_LEN_TEAM + 1] = "core";
 	char mobile[CS_LEN_MOBILE + 1] = "01077779999";
 	char tel[CS_LEN_TEL + 1] = "023335555";
@@ -169,13 +169,13 @@ void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
 		nRC = ENCDEC_EncodingTLVShort( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, CS_TAG_TOTAL_CNT, CS_LEN_TOTAL_CNT, 3 );
 		nPos += nRC;
 
-		nRC = SIM_SetDetailInfo( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, 0, 1004, name, company, team, 0x0e, 0x09, mobile, tel, email );
+		nRC = SIM_SetDetailInfo( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, 0, 1004, name, company, team, CS_P_EMPLOYEE, CS_T_STAFF, mobile, tel, email );
 		nPos += nRC;
 
-		nRC = SIM_SetDetailInfo( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, 1, 1005, name1, company1, team1, 0x0c, 0x07, mobile1, tel1, email1 );
+		nRC = SIM_SetDetailInfo( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, 1, 1005, name1, company1, team1, CS_P_MANAGER, CS_T_GROUP_LEADER, mobile1, tel1, email1 );
 		nPos += nRC;
 
-		nRC = SIM_SetDetailInfo( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, 2, 1006, name1, company1, team1, 0x03, 0x09, mobile1, tel1, email1 );
+		nRC = SIM_SetDetailInfo( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, 2, 1006, name1, company1, team1, CS_P_DIRECTOR, 0, mobile1, tel1, email1 );
 		nPos += nRC;
 	}
 	else if ( CS_RC_FAIL == Result )
