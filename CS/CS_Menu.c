@@ -31,7 +31,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(M) Name", tCreateReqData.szName, sizeof(tCreateReqData.szName) );
+		nRC = UTIL_InputData( "(Mandatory) Name", tCreateReqData.szName, sizeof(tCreateReqData.szName) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -41,7 +41,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(M) Company", tCreateReqData.szCompany, sizeof(tCreateReqData.szCompany) );
+		nRC = UTIL_InputData( "(Mandatory) Company", tCreateReqData.szCompany, sizeof(tCreateReqData.szCompany) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -51,7 +51,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(M) Team", tCreateReqData.szTeam, sizeof(tCreateReqData.szTeam) );
+		nRC = UTIL_InputData( "(Mandatory) Team", tCreateReqData.szTeam, sizeof(tCreateReqData.szTeam) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -61,7 +61,8 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(M 0x01~0x0E) Position", szPosition, sizeof(szPosition) );
+		nRC = UTIL_InputData( "* 직급은 0x01 ~ 0x0e 값만 입력해주세요\n"
+							  "(Mandatory) Position", szPosition, sizeof(szPosition) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -72,7 +73,8 @@ int MENU_Create()
 
 	tCreateReqData.ucPosition = (unsigned char)strtol(szPosition, NULL, 0);
 
-	nRC = UTIL_InputData( "(O 0x01~0x09) Title", szTitle, sizeof(szTitle) );
+	nRC = UTIL_InputData( "* 직책은 0x01 ~ 0x09 값만 입력해주세요\n"
+						  "(Optional) Title", szTitle, sizeof(szTitle) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -83,7 +85,8 @@ int MENU_Create()
 	
 	do
 	{
-		nRC = UTIL_InputData( "(M 11bytes) Mobile", tCreateReqData.szMobile, sizeof(tCreateReqData.szMobile) );
+		nRC = UTIL_InputData( "* 휴대전화 번호는 11자리만 입력해주세요\n"
+							  "(Mandatory) Mobile", tCreateReqData.szMobile, sizeof(tCreateReqData.szMobile) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -91,7 +94,7 @@ int MENU_Create()
 		}
 	} while ( CS_LEN_MOBILE != strlen(tCreateReqData.szMobile) );
 
-	nRC = UTIL_InputData( "(O) Tel", tCreateReqData.szTel, sizeof(tCreateReqData.szTel) );
+	nRC = UTIL_InputData( "(Optional) Tel", tCreateReqData.szTel, sizeof(tCreateReqData.szTel) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -100,7 +103,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(M) Email", tCreateReqData.szEmail, sizeof(tCreateReqData.szEmail) );
+		nRC = UTIL_InputData( "(Mandatory) Email", tCreateReqData.szEmail, sizeof(tCreateReqData.szEmail) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -108,7 +111,7 @@ int MENU_Create()
 		}
 	} while ( CS_EMPTY_INPUT == strlen(tCreateReqData.szEmail) );
 	
-	printf( "\n(M)%s/(M)%s/(M)%s/(M)%02x/(O)%02x/(M)%s/(O)%s/(M)%s\n",
+	printf( "\n%s / %s / %s / %02x / %02x / %s / %s / %s\n",
 			tCreateReqData.szName, tCreateReqData.szCompany,
 			tCreateReqData.szTeam, tCreateReqData.ucPosition,
 			tCreateReqData.ucTitle, tCreateReqData.szMobile,
@@ -214,7 +217,7 @@ int MENU_Create()
 		case CS_RC_FAIL:
 		{
 			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
-			return CS_rErrLoginFail;
+			return CS_rErrFromServer;
 		}
 			break;
 		default:
@@ -252,21 +255,22 @@ int MENU_Search()
 	memset( ucResBodyBuf, 0x00, sizeof(ucResBodyBuf) );
 	memset( &tResBody, 0x00, sizeof(tResBody) );
 
-	nRC = UTIL_InputData( "(O) Name", tSearchReqData.szName, sizeof(tSearchReqData.szName) );
+	nRC = UTIL_InputData( "(Optional) Name", tSearchReqData.szName, sizeof(tSearchReqData.szName) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 		return CS_rErrClientServerFail;
 	}
 
-	nRC = UTIL_InputData( "(O) Company", tSearchReqData.szCompany, sizeof(tSearchReqData.szCompany) );
+	nRC = UTIL_InputData( "(Optional) Company", tSearchReqData.szCompany, sizeof(tSearchReqData.szCompany) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 		return CS_rErrClientServerFail;
 	}
 
-	nRC = UTIL_InputData( "(O) Card Id", szCardId, sizeof(szCardId) );
+	nRC = UTIL_InputData( "* Card Id는 올바른 형식으로 입력하지 않으면 0으로 설정. 입력 안 한 것과 동일함\n"
+						  "(Optional) Card Id", szCardId, sizeof(szCardId) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -275,7 +279,7 @@ int MENU_Search()
 
 	STR_TO_INT( szCardId, tSearchReqData.unCardId );
 	
-	printf( "\n(O)%s/(O)%s/(O)%d\n",
+	printf( "\n%s / %s / %d\n",
 			tSearchReqData.szName, tSearchReqData.szCompany,
 			tSearchReqData.unCardId );
 
@@ -373,7 +377,7 @@ int MENU_Search()
 	{
 		case CS_RC_SUCCESS:
 		{
-			printf( "\n조회된 명함 정보 개수 %d\n", tResBody.u.tSearchResData.usTotalCnt );
+			printf( "\n\n조회된 명함 정보 개수 %d\n", tResBody.u.tSearchResData.usTotalCnt );
 
 			for ( nIndex = 0; nIndex < tResBody.u.tSearchResData.usTotalCnt; nIndex++ )
 			{
@@ -384,7 +388,7 @@ int MENU_Search()
 		case CS_RC_FAIL:
 		{
 			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
-			return CS_rErrLoginFail;
+			return CS_rErrFromServer;
 		}
 			break;
 		default:
@@ -426,21 +430,23 @@ int MENU_Delete()
 	{
 		usBitmask = 0x00;
 
-		nRC = UTIL_InputData( "(C) Name", tDeleteReqData.szName, sizeof(tDeleteReqData.szName) );
+		nRC = UTIL_InputData( "* 이름, 회사명, 명함 ID 중 한 개는 반드시 포함되어야 함\n"
+							  "(Conditional) Name", tDeleteReqData.szName, sizeof(tDeleteReqData.szName) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 			return CS_rErrClientServerFail;
 		}
 
-		nRC = UTIL_InputData( "(C) Company", tDeleteReqData.szCompany, sizeof(tDeleteReqData.szCompany) );
+		nRC = UTIL_InputData( "(Conditional) Company", tDeleteReqData.szCompany, sizeof(tDeleteReqData.szCompany) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 			return CS_rErrClientServerFail;
 		}
-
-		nRC = UTIL_InputData( "(C) Card Id", szCardId, sizeof(szCardId) );
+	
+		nRC = UTIL_InputData( "* Card Id는 올바른 형식으로 입력하지 않으면 0으로 설정. 입력 안 한 것과 동일함\n"
+						  "(Conditional) Card Id", szCardId, sizeof(szCardId) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -452,7 +458,7 @@ int MENU_Delete()
 
 	} while ( 0 == (0x00 | usBitmask) );
 	
-	printf( "\n(C)%s/(C)%s/(C)%d\n",
+	printf( "\n%s / %s / %d\n",
 			tDeleteReqData.szName, tDeleteReqData.szCompany, tDeleteReqData.unCardId );
 
 	/*
@@ -558,7 +564,7 @@ int MENU_Delete()
 		case CS_RC_FAIL:
 		{
 			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
-			return CS_rErrLoginFail;
+			return CS_rErrFromServer;
 		}
 			break;
 		default:
@@ -689,7 +695,7 @@ int MENU_Logout()
 		case CS_RC_FAIL:
 		{
 			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
-			return CS_rErrLoginFail;
+			return CS_rErrFromServer;
 		}
 			break;
 		default:

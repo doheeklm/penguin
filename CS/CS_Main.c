@@ -1,8 +1,8 @@
 /* CS_Main.c */
 #include "CS_Inc.h"
 
-int			g_nRunFlag = 1;
-CS_Env_t	g_tEnv;
+int g_nRunFlag = 1;
+CS_Env_t g_tEnv;
 
 void SignalHandler( int nSigno );
 
@@ -10,7 +10,7 @@ int main( int argc, char **argv )
 {
 	int nRC = 0, nLoginFailCnt = 0;
 
-	printf( "%s-endian system\n", UTIL_IsBigEndian() ? "big" : "little" );
+	printf( "%s-endian\n", UTIL_IsBigEndian() ? "big" : "little" );
 
 	nRC = CONF_Init( argc, argv[2], argv[1] );
 	if ( CS_rOk != nRC )
@@ -85,7 +85,6 @@ int main( int argc, char **argv )
 	}
 
 exit_main:
-
 	FD_CLOSE( g_tEnv.nClientFd );
 
 	return 0;

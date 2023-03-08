@@ -147,9 +147,8 @@ int TASK_Login()
 	{
 		case CS_RC_SUCCESS:
 		{
-			//g_tEnv.ulSessionId = tResBody.u.ulSessionId;
-			g_tEnv.ulSessionId = 1004; //TODO
-			printf( "\nSession ID = %016lx\n", g_tEnv.ulSessionId );
+			g_tEnv.ulSessionId = tResBody.u.ulSessionId;
+			printf( "\nSession ID = %016lx | %ld\n", g_tEnv.ulSessionId, g_tEnv.ulSessionId );
 		}
 			break;
 		case CS_RC_FAIL:
@@ -192,7 +191,10 @@ int TASK_Menu()
 					if ( CS_rOk != nRC )
 					{
 						LOG_ERR_F( "MENU_Create fail <%d>", nRC );
-						return nRC;
+						if ( CS_rErrFromServer == nRC )
+							continue;	
+						else
+							return nRC;
 					}
 				}
 					break;
@@ -204,7 +206,10 @@ int TASK_Menu()
 					if ( CS_rOk != nRC )
 					{
 						LOG_ERR_F( "MENU_Search fail <%d>", nRC );
-						return nRC;
+						if ( CS_rErrFromServer == nRC )
+							continue;	
+						else
+							return nRC;
 					}
 				}
 					break;
@@ -216,7 +221,10 @@ int TASK_Menu()
 					if ( CS_rOk != nRC )
 					{
 						LOG_ERR_F( "MENU_Delete fail <%d>", nRC );
-						return nRC;
+						if ( CS_rErrFromServer == nRC )
+							continue;	
+						else
+							return nRC;
 					}
 				}
 					break;
@@ -228,7 +236,10 @@ int TASK_Menu()
 					if ( CS_rOk != nRC )
 					{
 						LOG_ERR_F( "MENU_Logout fail <%d>", nRC );
-						return nRC;
+						if ( CS_rErrFromServer == nRC )
+							continue;	
+						else
+							return nRC;
 					}
 
 					return CS_rBackToLogin;

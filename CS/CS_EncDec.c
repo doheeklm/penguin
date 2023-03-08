@@ -485,6 +485,46 @@ int ENCDEC_EncodingTLVInt( unsigned char *pucBuf, int nBufLen, unsigned char ucT
 	return sizeof(unsigned char) + sizeof(unsigned short) + sizeof(unsigned int);
 }
 
+int ENCDEC_EncodingTLVShort( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, unsigned short usValue )
+{
+	CHECK_PARAM_RC( pucBuf );
+	CHECK_OVERFLOW( (int)usLength + 1, nBufLen, CS_rErrOverflow );
+
+	int nRC = 0, nPos = 0;
+
+	/* Tag */
+	pucBuf[nPos] = ucTag;
+	nPos++;
+
+	/* Length */
+	nRC = encdec_EncodingShort( &pucBuf[nPos], nBufLen - nPos, usLength );
+	if ( 0 > nRC )
+	{
+		LOG_ERR_F( "encdec_EncodingShort fail <%d>", nRC );
+		return nRC;
+	}
+	else
+	{
+		nPos += nRC;
+		CHECK_OVERFLOW( nPos, nBufLen, CS_rErrOverflow );
+	}
+
+	/* Value(short) */
+	nRC = encdec_EncodingShort( &pucBuf[nPos], nBufLen - nPos, usValue );
+	if ( 0 > nRC )
+	{
+		LOG_ERR_F( "encdec_EncodingShort fail <%d>", nRC );
+		return nRC;
+	}
+	else
+	{
+		nPos += nRC;
+		CHECK_OVERFLOW( nPos, nBufLen, CS_rErrOverflow );
+	}
+
+	return sizeof(unsigned char) + sizeof(unsigned short) + sizeof(unsigned short);
+}
+
 int ENCDEC_EncodingTLVLong( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, unsigned long ulValue )
 {
 	CHECK_PARAM_RC( pucBuf );
@@ -581,7 +621,7 @@ int encdec_EncodingInt( unsigned char *pucBuf, int nBufLen, unsigned int unData 
 
 	unsigned int *punTemp;
 	punTemp = (unsigned int *)pucBuf;
-	*punTemp = htons(unData);
+	*punTemp = htonl(unData);
 
 	return sizeof(unsigned int);
 }
@@ -691,6 +731,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 
 	while ( nPos < nBufLen )
 	{
+		/* 1. Result Code */
 		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
 		{
 			nPos++;
@@ -715,6 +756,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 		
 			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
 		}
+		/* 2. Err Code */
 		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
 		{
 			nPos++;
@@ -739,6 +781,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 
 			usBitmask |= CS_FIELD_MASK_ERR_CODE;
 		}
+		/* 3. Session Id */
 		else if ( CS_TAG_SESSION_ID == pucBuf[nPos] )
 		{
 			nPos++;
@@ -770,8 +813,7 @@ int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *
 		}
 	}
 
-	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
-		 (CS_FIELD_MASK_LOGIN_RES != usBitmask) )
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) && (CS_FIELD_MASK_LOGIN_RES != usBitmask) )
 	{
 		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
 		return CS_rErrWrongResponse;
@@ -790,6 +832,7 @@ int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 
 	while ( nPos < nBufLen )
 	{
+		/* 1. Result Code */
 		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
 		{
 			nPos++;
@@ -814,6 +857,7 @@ int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 		
 			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
 		}
+		/* 2. Err Code */
 		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
 		{
 			nPos++;
@@ -838,6 +882,7 @@ int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 
 			usBitmask |= CS_FIELD_MASK_ERR_CODE;
 		}
+		/* 3. Card Id */
 		else if ( CS_TAG_CARD_ID == pucBuf[nPos] )
 		{
 			nPos++;
@@ -869,8 +914,7 @@ int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 		}
 	}
 
-	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
-		 (CS_FIELD_MASK_CREATE_RES != usBitmask) )
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) && (CS_FIELD_MASK_CREATE_RES != usBitmask) )
 	{
 		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
 		return CS_rErrWrongResponse;
@@ -884,10 +928,12 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 	CHECK_PARAM_RC( pucBuf );
 	CHECK_PARAM_RC( ptResBody );
 
-	int nRC = 0, nPos = 0, nCnt = -1;
+	int nRC = 0, nPos = 0, nCnt = -1, i = 0;
 	unsigned short usLength = 0;
 	unsigned short usBitmask = 0;
-
+	unsigned short ausBitmask[CS_MAX_INFO];
+	memset( ausBitmask, 0x00, sizeof(ausBitmask) );
+	
 	while ( nPos < nBufLen )
 	{
 		/* 1. Result Code */
@@ -988,8 +1034,8 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 				return nRC;
 			}
 			nPos += nRC;
-
-			usBitmask |= CS_FIELD_MASK_CNT;
+		
+			ausBitmask[nCnt] |= CS_FIELD_MASK_CNT;
 		}
 		/* 5. Card Id */
 		else if ( CS_TAG_CARD_ID == pucBuf[nPos] )
@@ -1004,7 +1050,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
+			CHECK_TLV_LENGTH( CS_LEN_CARD_ID, usLength );
 
 			nRC = encdec_DecodingInt( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].unCardId) );
 			if ( 0 > nRC )
@@ -1014,7 +1060,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_CARD_ID;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_CARD_ID;
 		}
 		/* 6. Name */
 		else if ( CS_TAG_NAME == pucBuf[nPos] )
@@ -1030,7 +1076,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			nPos += nRC;
 
 			CHECK_TLV_LENGTH( CS_LEN_NAME, usLength );
-
+			
 			nRC = encdec_DecodingString( &pucBuf[nPos], ptResBody->u.tSearchResData.tDetailInfo[nCnt].szName, CS_LEN_NAME );
 			if ( 0 > nRC )
 			{
@@ -1039,7 +1085,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_NAME;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_NAME;
 		}
 		/* 7. Company */
 		else if ( CS_TAG_COMPANY == pucBuf[nPos] )
@@ -1064,7 +1110,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_COMPANY;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_COMPANY;
 		}
 		/* 8. Team */
 		else if ( CS_TAG_TEAM == pucBuf[nPos] )
@@ -1089,7 +1135,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_TEAM;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_TEAM;
 		}
 		/* 9. Position */
 		else if ( CS_TAG_POSITION == pucBuf[nPos] )
@@ -1114,7 +1160,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_POSITION;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_POSITION;
 		}
 		/* 10. Title (Optional - No bit check) */
 		else if ( CS_TAG_TITLE == pucBuf[nPos] )
@@ -1162,9 +1208,9 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_MOBILE;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_MOBILE;
 		}
-		/* 12. Tel */
+		/* 12. Tel (Optional - No bit check) */
 		else if ( CS_TAG_TEL == pucBuf[nPos] )
 		{
 			nPos++;
@@ -1210,7 +1256,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_EMAIL;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_EMAIL;
 		}
 		else
 		{
@@ -1219,18 +1265,26 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 		}
 	}
 
-	nCnt += 2;
+	nCnt += 1;
 	if ( nCnt != ptResBody->u.tSearchResData.usTotalCnt )
 	{
 		LOG_ERR_F( "nCnt(%d) != usTotalCnt(%d)", nCnt, ptResBody->u.tSearchResData.usTotalCnt );
 		return CS_rErrSystemFail;
 	}
 
-	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
-		 (CS_FIELD_MASK_SEARCH_RES != usBitmask) )
+	if ( CS_FIELD_MASK_FAIL_RES != usBitmask && CS_FIELD_MASK_TOTAL_CNT_RES != usBitmask )
 	{
-		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
-		return CS_rErrWrongResponse;
+		LOG_ERR_F( "response message does not contains 'result code+err code' nor 'result code+total cnt'" );
+		return CS_rErrSystemFail;
+	}
+
+	for ( i = 0; i < ptResBody->u.tSearchResData.usTotalCnt; i++ )
+	{
+		if ( CS_FIELD_MASK_DETAIL_INFO != ausBitmask[i] )
+		{
+			LOG_ERR_F( "wrong response message info[%d] <(missing tag)/(or tag all included)>", i );
+			return CS_rErrWrongResponse;
+		}
 	}
 
 	return CS_rOk;
@@ -1241,10 +1295,12 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 	CHECK_PARAM_RC( pucBuf );
 	CHECK_PARAM_RC( ptResBody );
 
-	int nRC = 0, nPos = 0, nCnt = -1;
+	int nRC = 0, nPos = 0, nCnt = -1, i = 0;
 	unsigned short usLength = 0;
 	unsigned short usBitmask = 0;
-
+	unsigned short ausBitmask[CS_MAX_INFO];
+	memset( ausBitmask, 0x00, sizeof(ausBitmask) );
+	
 	while ( nPos < nBufLen )
 	{
 		/* 1. Result Code */
@@ -1346,7 +1402,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_CNT;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_CNT;
 		}
 		/* 5. Card Id */
 		else if ( CS_TAG_CARD_ID == pucBuf[nPos] )
@@ -1361,7 +1417,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
+			CHECK_TLV_LENGTH( CS_LEN_CARD_ID, usLength );
 
 			nRC = encdec_DecodingInt( &pucBuf[nPos], &(ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].unCardId) );
 			if ( 0 > nRC )
@@ -1371,7 +1427,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_CARD_ID;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_CARD_ID;
 		}
 		/* 6. Name */
 		else if ( CS_TAG_NAME == pucBuf[nPos] )
@@ -1396,7 +1452,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_NAME;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_NAME;
 		}
 		/* 7. Company */
 		else if ( CS_TAG_COMPANY == pucBuf[nPos] )
@@ -1421,7 +1477,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_COMPANY;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_COMPANY;
 		}
 		/* 8. Mobile */
 		else if ( CS_TAG_MOBILE == pucBuf[nPos] )
@@ -1446,7 +1502,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 			}
 			nPos += nRC;
 
-			usBitmask |= CS_FIELD_MASK_MOBILE;
+			ausBitmask[nCnt] |= CS_FIELD_MASK_MOBILE;
 		}
 		else
 		{
@@ -1455,18 +1511,26 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 		}
 	}
 	
-	nCnt += 2;
+	nCnt += 1;
 	if ( nCnt != ptResBody->u.tDeleteResData.usTotalCnt )
 	{
 		LOG_ERR_F( "nCnt(%d) != usTotalCnt(%d)", nCnt, ptResBody->u.tDeleteResData.usTotalCnt );
 		return CS_rErrSystemFail;
 	}
 
-	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
-		 (CS_FIELD_MASK_DELETE_RES != usBitmask) )
+	if ( CS_FIELD_MASK_FAIL_RES != usBitmask && CS_FIELD_MASK_TOTAL_CNT_RES != usBitmask )
 	{
-		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
-		return CS_rErrWrongResponse;
+		LOG_ERR_F( "response message does not contains 'result code+err code' nor 'result code+total cnt'" );
+		return CS_rErrSystemFail;
+	}
+
+	for ( i = 0; i < ptResBody->u.tDeleteResData.usTotalCnt; i++ )
+	{
+		if ( CS_FIELD_MASK_SIMPLE_INFO != ausBitmask[i] )
+		{
+			LOG_ERR_F( "wrong response message info[%d] <(missing tag)/(or tag all included)>", i );
+			return CS_rErrWrongResponse;
+		}
 	}
 
 	return CS_rOk;
@@ -1483,6 +1547,7 @@ int ENCDEC_DecodingLogoutBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 
 	while ( nPos < nBufLen )
 	{
+		/* 1. Result Code */
 		if ( CS_TAG_RESULT_CODE == pucBuf[nPos] )
 		{
 			nPos++;
@@ -1507,6 +1572,7 @@ int ENCDEC_DecodingLogoutBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 		
 			usBitmask |= CS_FIELD_MASK_RESULT_CODE;
 		}
+		/* 2. Err Code */
 		else if ( CS_TAG_ERR_CODE == pucBuf[nPos] )
 		{
 			nPos++;
@@ -1538,8 +1604,7 @@ int ENCDEC_DecodingLogoutBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 		}
 	}
 
-	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) &&
-		 (CS_FIELD_MASK_RESULT_CODE != usBitmask) )
+	if ( (CS_FIELD_MASK_FAIL_RES != usBitmask) && (CS_FIELD_MASK_RESULT_CODE != usBitmask) )
 	{
 		LOG_ERR_F( "wrong response message <(missing tag)/(or tag all included)>" );
 		return CS_rErrWrongResponse;
@@ -1607,12 +1672,7 @@ int encdec_DecodingLong( unsigned char *pucBuf, unsigned long *pulData )
 	int i = 0;
 	unsigned long *pulTemp;
 	pulTemp = (unsigned long *)pucBuf;
-	printf( "\nBefore byteordering(ntohl) : %16lx", *pulTemp );
-
 	*pulData = ntohl(*pulTemp);
-	printf( "\nAfter byteordering(ntohl) : %16lx", *pulData );
-
-	//TODO ntohl for 4byte long
 
 	return sizeof(unsigned long);
 }

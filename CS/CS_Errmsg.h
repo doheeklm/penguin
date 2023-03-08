@@ -20,6 +20,7 @@ typedef enum
 
 	CS_rErrDecodingFail,
 	CS_rErrWrongResponse,
+	CS_rErrFromServer,
 
 	CS_rBackToLogin,
 	CS_rExitProgram,

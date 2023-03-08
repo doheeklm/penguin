@@ -62,16 +62,16 @@
 									"프로그램을 종료합니다.\n\n" ); 
 #define PRT_DETAIL_INFO( _i ) \
 	do { \
-		printf( "[ 명함 %c ]\n" \
+		printf( "\n[ 명함 %02x ]\n" \
 				"명함 ID : %d\n" \
 				"이름 : %s\n" \
-				"회사 : %s\n" \
+				"회사명 : %s\n" \
 				"부서 : %s\n" \
-				"직위 : %c\n" \
-				"직책 : %c\n" \
+				"직위 : %02x\n" \
+				"직책 : %02x\n" \
 				"휴대전화 : %s\n" \
 				"유선전화 : %s\n" \
-				"이메일 : %s\n\n", \
+				"이메일 : %s\n", \
 				(_i).ucCnt, (_i).unCardId, (_i).szName, \
 				(_i).szCompany, (_i).szTeam, (_i).ucPosition, \
 				(_i).ucTitle, (_i).szMobile, (_i).szTel, (_i).szEmail ); \
@@ -79,10 +79,10 @@
 
 #define PRT_SIMPLE_INFO( _i ) \
 	do { \
-		printf( "[ 명함 %c ]\n" \
+		printf( "\n[ 명함 %02x ]\n" \
 				"명함 ID : %d\n" \
 				"이름 : %s\n" \
-				"회사 : %s\n" \
+				"회사명 : %s\n" \
 				"휴대전화 : %s\n", \
 				(_i).ucCnt, (_i).unCardId, (_i).szName, \
 				(_i).szCompany, (_i).szMobile ); \

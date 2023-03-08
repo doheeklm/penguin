@@ -5,7 +5,7 @@
 #define CS_EMPTY_INPUT			0
 #define CS_REQ_BUF_LEN			200
 #define CS_RES_HEADER_BUF_LEN	5
-#define CS_RES_BODY_BUF_LEN		512
+#define CS_RES_BODY_BUF_LEN		1024
 
 #define CS_SPACE				' '
 #define CS_ASTERISK				'*'
@@ -31,20 +31,20 @@
 /* Field Mask */
 typedef enum _CS_FieldMask_e
 {
-	CS_FIELD_MASK_RESULT_CODE	= 0x01,
-	CS_FIELD_MASK_ERR_CODE		= 0x02,
-	CS_FIELD_MASK_SESSION_ID	= 0x04,
-	CS_FIELD_MASK_CARD_ID		= 0x08,
-	CS_FIELD_MASK_NAME			= 0x10,		//0000 0001 0000
-	CS_FIELD_MASK_COMPANY		= 0x20,		//0000 0010 0000
-	CS_FIELD_MASK_MOBILE		= 0x40,		//0000 0100 0000
-	CS_FIELD_MASK_TEL			= 0x80,		//0000 1000 0000
-	CS_FIELD_MASK_TEAM			= 0x100,	//0001 0000 0000
-	CS_FIELD_MASK_POSITION		= 0x200,	//0010 0000 0000
-	CS_FIELD_MASK_TITLE			= 0x400,	//0100 0000 0000
-	CS_FIELD_MASK_EMAIL			= 0x800,	//1000 0000 0000
+	CS_FIELD_MASK_RESULT_CODE	= 0x01,		//00 0000 0000 0001
+	CS_FIELD_MASK_ERR_CODE		= 0x02,		//00 0000 0000 0010
+	CS_FIELD_MASK_SESSION_ID	= 0x04,		//00 0000 0000 0100
+	CS_FIELD_MASK_CARD_ID		= 0x08,		//00 0000 0000 1000
+	CS_FIELD_MASK_NAME			= 0x10,		//00 0000 0001 0000
+	CS_FIELD_MASK_COMPANY		= 0x20,		//00 0000 0010 0000
+	CS_FIELD_MASK_MOBILE		= 0x40,		//00 0000 0100 0000
+	CS_FIELD_MASK_TEL			= 0x80,		//00 0000 1000 0000
+	CS_FIELD_MASK_TEAM			= 0x100,	//00 0001 0000 0000
+	CS_FIELD_MASK_POSITION		= 0x200,	//00 0010 0000 0000
+	CS_FIELD_MASK_TITLE			= 0x400,	//00 0100 0000 0000
+	CS_FIELD_MASK_EMAIL			= 0x800,	//00 1000 0000 0000
 	CS_FIELD_MASK_TOTAL_CNT		= 0x1000,
-	CS_FIELD_MASK_CNT			= 0x2000
+	CS_FIELD_MASK_CNT			= 0x2000	//10 0000 0000 0000
 } CS_FieldMask_e;
 
 #define CS_SET_MASK( p_mask, _data_mask, _data ) \
@@ -85,14 +85,13 @@ typedef enum _CS_FieldMask_e
 #define CS_FIELD_MASK_FAIL_RES		(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_ERR_CODE)
 #define CS_FIELD_MASK_LOGIN_RES		(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_SESSION_ID)
 #define CS_FIELD_MASK_CREATE_RES	(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_CARD_ID)
-#define CS_FIELD_MASK_SEARCH_RES	(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_TOTAL_CNT| \
-									 CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID| \
+#define CS_FIELD_MASK_TOTAL_CNT_RES (CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_TOTAL_CNT )
+#define CS_FIELD_MASK_DETAIL_INFO	(CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID| \
 									 CS_FIELD_MASK_NAME|CS_FIELD_MASK_COMPANY| \
 									 CS_FIELD_MASK_TEAM|CS_FIELD_MASK_POSITION| \
 									 CS_FIELD_MASK_MOBILE|CS_FIELD_MASK_EMAIL)
-#define CS_FIELD_MASK_DELETE_RES	(CS_FIELD_MASK_RESULT_CODE|CS_FIELD_MASK_TOTAL_CNT| \
-									 CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID| \
-									 CS_FIELD_MASK_NAME|CS_FIELD_MASK_COMPANY|CS_FIELD_MASK_TEL)
+#define CS_FIELD_MASK_SIMPLE_INFO	(CS_FIELD_MASK_CNT|CS_FIELD_MASK_CARD_ID| \
+									 CS_FIELD_MASK_NAME|CS_FIELD_MASK_COMPANY|CS_FIELD_MASK_MOBILE)
 
 /* Message Type */
 typedef enum _CS_MsgType_e
@@ -292,6 +291,7 @@ void encdec_SetBodyLen( unsigned char *pucBuf, unsigned int unLen );
 
 int ENCDEC_EncodingTLVString( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, char *pszValue, char cFillChar ); 
 int ENCDEC_EncodingTLVOneByte( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, unsigned char ucValue );
+int ENCDEC_EncodingTLVShort( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, unsigned short usValue );
 int ENCDEC_EncodingTLVInt( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, unsigned int unValue );
 int ENCDEC_EncodingTLVLong( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, unsigned long ulValue );
 
