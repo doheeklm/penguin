@@ -5,7 +5,7 @@ extern CS_Env_t g_tEnv;
 
 int CONF_Init( int nArg, char *pszPort, char *pszIp )
 {
-	if( 3 < nArg )
+	if( 3 < nArg ||  2 == nArg )
 	{
 		printf( "Usage: client [Server Ip] [Port]\n" );
 		return CS_rErrConfigInit;

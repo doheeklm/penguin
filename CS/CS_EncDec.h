@@ -14,7 +14,7 @@
 #define CS_LEN_LOGIN_ID			12
 #define CS_LEN_LOGIN_PW			15
 #define CS_LEN_SESSION_ID		8
-#define CS_LEN_CARD_ID			4
+#define CS_LEN_CARD_ID			10 //int 10
 #define CS_LEN_NAME				20
 #define CS_LEN_COMPANY			20
 #define CS_LEN_MOBILE			11
@@ -136,7 +136,7 @@ typedef enum _CS_Title_e
     CS_T_HEAD_OF_DEVISION      = 0x04,
     CS_T_DIRECTOR              = 0x05,
     CS_T_GROUP_LEADER          = 0x06,
-    CS_T_MANAGER_OF_DEPARMENT  = 0x07,
+    CS_T_MANAGER_OF_DEPARTMENT = 0x07,
     CS_T_CTO                   = 0x08,
     CS_T_CEO                   = 0x09
 } CS_Title_e;
@@ -228,7 +228,7 @@ typedef struct
 /**************************************************/
 typedef struct
 {
-	unsigned char			ucCnt;
+	unsigned char			ucNum;
 	unsigned int			unCardId;
 	char					szName[CS_LEN_NAME + 1];
 	char					szCompany[CS_LEN_COMPANY + 1];
@@ -242,7 +242,7 @@ typedef struct
 
 typedef struct
 {
-	unsigned char			ucCnt;
+	unsigned char			ucNum;
 	unsigned int			unCardId;
 	char					szName[CS_LEN_NAME + 1];
 	char					szCompany[CS_LEN_COMPANY + 1];
@@ -281,12 +281,12 @@ typedef struct
  */
 
 int ENCDEC_EncodingHeader( unsigned char *pucBuf, int nBufLen, CS_Header_t *ptHeader );
+
 int ENCDEC_EncodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_LoginReqData_t *ptLoginReqData );
 int ENCDEC_EncodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_CreateReqData_t *ptCreateReqData, unsigned short usBitmask );
 int ENCDEC_EncodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_SearchReqData_t *ptSearchReqData, unsigned short usBitmask );
 int ENCDEC_EncodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_DeleteReqData_t *ptDeleteReqData, unsigned short usBitmask );
 int ENCDEC_EncodingLogoutBody( unsigned char *pucBuf, int nBufLen );
-
 void encdec_SetBodyLen( unsigned char *pucBuf, unsigned int unLen );
 
 int ENCDEC_EncodingTLVString( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, char *pszValue, char cFillChar ); 
@@ -306,8 +306,8 @@ int encdec_EncodingLong( unsigned char *pucBuf, int nBufLen, unsigned long ulDat
  */
 
 int ENCDEC_DecodingHeader( unsigned char *pucBuf, CS_Header_t *ptHeader );
-int ENCDEC_DecodingBody( unsigned char *pucBuf, CS_Header_t tHeader, CS_ResBody_t *ptResBody );
 
+int ENCDEC_DecodingBody( unsigned char *pucBuf, CS_Header_t tHeader, CS_ResBody_t *ptResBody );
 int ENCDEC_DecodingLoginBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
 int ENCDEC_DecodingCreateBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
 int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t *ptResBody );
@@ -319,6 +319,5 @@ int encdec_DecodingOneByte( unsigned char *pucBuf, unsigned char *pucData );
 int encdec_DecodingShort( unsigned char *pucBuf, unsigned short *pusData );
 int encdec_DecodingInt( unsigned char *pucBuf, unsigned int *punData );
 int encdec_DecodingLong( unsigned char *pucBuf, unsigned long *pulData );
-
 
 #endif /* _CS_ENCDEC_H_ */

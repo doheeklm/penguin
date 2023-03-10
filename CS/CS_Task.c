@@ -27,7 +27,7 @@ int TASK_Login()
 	PRT_TITLE( "Login" );	
 	do
 	{
-		nRC = UTIL_InputData( "ID", tLoginReqData.szLoginId, sizeof(tLoginReqData.szLoginId) );
+		nRC = UTIL_InputData( "아이디", tLoginReqData.szLoginId, sizeof(tLoginReqData.szLoginId) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -43,7 +43,7 @@ int TASK_Login()
 	}
 
 	do {
-		nRC = UTIL_InputData( "PW", tLoginReqData.szLoginPw, sizeof(tLoginReqData.szLoginPw) );
+		nRC = UTIL_InputData( "비밀번호", tLoginReqData.szLoginPw, sizeof(tLoginReqData.szLoginPw) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -86,28 +86,29 @@ int TASK_Login()
 	}
 
 	encdec_SetBodyLen( ucReqBuf, nPos - CS_RES_HEADER_BUF_LEN );	
-	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
 
-	PRT_TITLE( "Request" )
-	UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
+	PRT_TITLE( "Request" );
+	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
+
+#ifdef RUN
+	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
+	if ( CS_rOk != nRC )
+	{
+		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
+		return CS_rErrWriteFail;
+	}
+#endif
+
+	/*
+	 *	Response Message for 'Login'
+	 */
 
 #ifdef SIM
 	SIM_Login( ucResHeaderBuf, ucResBodyBuf );
 #endif
 
 #ifdef RUN
-	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) + 1 );
-	if ( CS_rOk != nRC )
-	{
-		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
-		return CS_rErrWriteFail;
-	}
-
-	/*
-	 *	Response Message for 'Login'
-	 */
-
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( 0 > nRC )
 	{
@@ -148,7 +149,7 @@ int TASK_Login()
 		case CS_RC_SUCCESS:
 		{
 			g_tEnv.ulSessionId = tResBody.u.ulSessionId;
-			printf( "\nSession ID = %016lx | %ld\n", g_tEnv.ulSessionId, g_tEnv.ulSessionId );
+			printf( "\nSession ID = %ld(0x%016lx)\n", g_tEnv.ulSessionId, g_tEnv.ulSessionId );
 		}
 			break;
 		case CS_RC_FAIL:

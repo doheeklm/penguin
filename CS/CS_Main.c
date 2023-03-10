@@ -10,8 +10,6 @@ int main( int argc, char **argv )
 {
 	int nRC = 0, nLoginFailCnt = 0;
 
-	printf( "%s-endian\n", UTIL_IsBigEndian() ? "big" : "little" );
-
 	nRC = CONF_Init( argc, argv[2], argv[1] );
 	if ( CS_rOk != nRC )
 	{
@@ -37,27 +35,34 @@ int main( int argc, char **argv )
 		LOG_ERR_F( "SOCK_Init fail <%d>", nRC );
 		goto exit_main;
 	}
+
+	nRC = SOCK_SetFd();
+	if ( CS_rOk != nRC )
+	{
+		LOG_ERR_F( "SOCK_SetFd fail <%d>", nRC );
+		goto exit_main;
+	}
 #endif
-	
+
 	while( g_nRunFlag )
 	{
 		nRC = TASK_Login();
 		if ( CS_rOk != nRC )
 		{
-			if ( CS_rErrLoginFail == nRC )
+			if ( CS_rErrLoginFail == nRC ) //서버로부터 로그인 실패를 응답 받을 경우
 			{
 				nLoginFailCnt++;
 				PRT_TITLE( "System" );
 				PRT_ERR_CNT( nLoginFailCnt );
 
-				if ( nLoginFailCnt >= 3 )
+				if ( nLoginFailCnt >= 3 ) //재시도 횟수 3번을 넘어가는 경우 프로그램 종료
 				{
 					PRT_EXIT;
 					goto exit_main;
 				}
 				else
 				{
-					PRT_RETRY;
+					PRT_RETRY; //로그인 재시도
 					continue;
 				}
 			}
@@ -73,7 +78,7 @@ int main( int argc, char **argv )
 		}
 	
 		nRC = TASK_Menu();
-		if ( CS_rBackToLogin == nRC )
+		if ( CS_rBackToLogin == nRC ) //로그아웃 성공 
 		{
 			continue;
 		}

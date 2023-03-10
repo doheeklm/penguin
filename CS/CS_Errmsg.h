@@ -14,9 +14,13 @@ typedef enum
 	CS_rErrReadFail,
 	CS_rErrWrongLength,
 
+	CS_rErrMallocFail,
 	CS_rErrClientServerFail,
 	CS_rErrSystemFail, //서버측 에러
 	CS_rErrLoginFail, //클라이언트측 에러
+	CS_rErrWrongInput,
+
+	CS_rErrTimeout,
 
 	CS_rErrDecodingFail,
 	CS_rErrWrongResponse,

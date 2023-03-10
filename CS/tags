@@ -133,7 +133,7 @@ CS_T_DIRECTOR	CS_EncDec.h	/^    CS_T_DIRECTOR              = 0x05,$/;"	e	enum:_C
 CS_T_GROUP_LEADER	CS_EncDec.h	/^    CS_T_GROUP_LEADER          = 0x06,$/;"	e	enum:_CS_Title_e
 CS_T_HEAD_OF_DEPARTMENT	CS_EncDec.h	/^    CS_T_HEAD_OF_DEPARTMENT    = 0x03,$/;"	e	enum:_CS_Title_e
 CS_T_HEAD_OF_DEVISION	CS_EncDec.h	/^    CS_T_HEAD_OF_DEVISION      = 0x04,$/;"	e	enum:_CS_Title_e
-CS_T_MANAGER_OF_DEPARMENT	CS_EncDec.h	/^    CS_T_MANAGER_OF_DEPARMENT  = 0x07,$/;"	e	enum:_CS_Title_e
+CS_T_MANAGER_OF_DEPARTMENT	CS_EncDec.h	/^    CS_T_MANAGER_OF_DEPARTMENT = 0x07,$/;"	e	enum:_CS_Title_e
 CS_T_STAFF	CS_EncDec.h	/^    CS_T_STAFF                 = 0x01,$/;"	e	enum:_CS_Title_e
 CS_Tag_e	CS_EncDec.h	/^} CS_Tag_e;$/;"	t	typeref:enum:_CS_Tag_e
 CS_Title_e	CS_EncDec.h	/^} CS_Title_e;$/;"	t	typeref:enum:_CS_Title_e
@@ -150,6 +150,7 @@ CS_rErrReadFail	CS_Errmsg.h	/^	CS_rErrReadFail,$/;"	e	enum:__anon12
 CS_rErrSocketFail	CS_Errmsg.h	/^	CS_rErrSocketFail,$/;"	e	enum:__anon12
 CS_rErrSystemFail	CS_Errmsg.h	/^	CS_rErrSystemFail, \/\/서버측 에러$/;"	e	enum:__anon12
 CS_rErrWriteFail	CS_Errmsg.h	/^	CS_rErrWriteFail,$/;"	e	enum:__anon12
+CS_rErrWrongInput	CS_Errmsg.h	/^	CS_rErrWrongInput,$/;"	e	enum:__anon12
 CS_rErrWrongLength	CS_Errmsg.h	/^	CS_rErrWrongLength,$/;"	e	enum:__anon12
 CS_rErrWrongResponse	CS_Errmsg.h	/^	CS_rErrWrongResponse,$/;"	e	enum:__anon12
 CS_rExitProgram	CS_Errmsg.h	/^	CS_rExitProgram,$/;"	e	enum:__anon12
@@ -183,13 +184,13 @@ MENU_LOGOUT	CS_Task.h	8;"	d
 MENU_Logout	CS_Menu.c	/^int MENU_Logout()$/;"	f
 MENU_SEARCH	CS_Task.h	6;"	d
 MENU_Search	CS_Menu.c	/^int MENU_Search()$/;"	f
-PRT_DETAIL_INFO	CS_Macro.h	63;"	d
+PRT_DETAIL_INFO	CS_Macro.h	64;"	d
 PRT_ERR_CNT	CS_Macro.h	57;"	d
 PRT_EXIT	CS_Macro.h	58;"	d
 PRT_LF	CS_Macro.h	49;"	d
 PRT_MENU	CS_Macro.h	50;"	d
 PRT_RETRY	CS_Macro.h	59;"	d
-PRT_SIMPLE_INFO	CS_Macro.h	80;"	d
+PRT_SIMPLE_INFO	CS_Macro.h	81;"	d
 PRT_SYS_FAIL	CS_Macro.h	61;"	d
 PRT_TITLE	CS_Macro.h	56;"	d
 ReturnCode_e	CS_Errmsg.h	/^} ReturnCode_e;$/;"	t	typeref:enum:__anon12
@@ -200,10 +201,10 @@ SIM_Logout	CS_Sim.c	/^void SIM_Logout( unsigned char *pucHeader, unsigned char *
 SIM_Search	CS_Sim.c	/^void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )$/;"	f
 SIM_SetBodyLen	CS_Sim.c	/^void SIM_SetBodyLen( unsigned char *pucBuf, int unBodyLen )$/;"	f
 SIM_SetDetailInfo	CS_Sim.c	/^int SIM_SetDetailInfo( unsigned char *pucBuf, int nLen, int cnt, int card_id, char *name, char *company, char *team, char position, char title, char *mobile, char *tel, char *email )$/;"	f
+SIM_SetSimpleInfo	CS_Sim.c	/^int SIM_SetSimpleInfo( unsigned char *pucBuf, int nLen, int cnt, int card_id, char *name, char *company, char *mobile )$/;"	f
 SOCK_Init	CS_Sock.c	/^int SOCK_Init()$/;"	f
 SOCK_Read	CS_Sock.c	/^int SOCK_Read( unsigned char *pucBuf, int nBufLen )$/;"	f
 SOCK_Write	CS_Sock.c	/^int SOCK_Write( unsigned char *pucBuf, int nBufLen )$/;"	f
-STR_TO_INT	CS_Macro.h	91;"	d
 SignalHandler	CS_Main.c	/^void SignalHandler( int nSigno )$/;"	f
 TASK_ADMIN	CS_Task.h	15;"	d
 TASK_CREATE	CS_Task.h	11;"	d
@@ -216,8 +217,10 @@ TASK_SEARCH	CS_Task.h	12;"	d
 UTIL_ClearLine	CS_Util.c	/^void UTIL_ClearLine()$/;"	f
 UTIL_ClearStdin	CS_Util.c	/^void UTIL_ClearStdin( char *pszBuf )$/;"	f
 UTIL_InputData	CS_Util.c	/^int UTIL_InputData( const char *pszPrt, char *pszBuf, int nBufLen )$/;"	f
-UTIL_IsBigEndian	CS_Util.c	/^int UTIL_IsBigEndian()$/;"	f
+UTIL_MappingStrToPosition	CS_Util.c	/^int UTIL_MappingStrToPosition( const char *pszStr, unsigned char *pucPosition, int nStrLen )$/;"	f
+UTIL_MappingStrToTitle	CS_Util.c	/^int UTIL_MappingStrToTitle( const char *pszStr, unsigned char *pucTitle, int nStrLen )$/;"	f
 UTIL_PrtBuf	CS_Util.c	/^void UTIL_PrtBuf( const char *pszBuf, int nBufLen )$/;"	f
+UTIL_ValidInputCardId	CS_Util.c	/^int UTIL_ValidInputCardId( const char *pszStr, unsigned int *punCardId )$/;"	f
 _CS_CONF_H_	CS_Conf.h	3;"	d
 _CS_ENCDEC_H_	CS_EncDec.h	3;"	d
 _CS_ERR_H_	CS_Errmsg.h	3;"	d
@@ -278,10 +281,10 @@ tDetailInfo	CS_EncDec.h	/^	CS_DetailInfo_t			tDetailInfo[CS_MAX_INFO];$/;"	m	str
 tSearchResData	CS_EncDec.h	/^		CS_SearchResData_t	tSearchResData;$/;"	m	union:__anon9::__anon10
 tSimpleInfo	CS_EncDec.h	/^	CS_SimpleInfo_t			tSimpleInfo[CS_MAX_INFO];$/;"	m	struct:__anon8
 u	CS_EncDec.h	/^	} u;$/;"	m	struct:__anon9	typeref:union:__anon9::__anon10
-ucCnt	CS_EncDec.h	/^	unsigned char			ucCnt;$/;"	m	struct:__anon5
-ucCnt	CS_EncDec.h	/^	unsigned char			ucCnt;$/;"	m	struct:__anon6
 ucErrCode	CS_EncDec.h	/^		unsigned char		ucErrCode;$/;"	m	union:__anon9::__anon10
 ucMsgType	CS_EncDec.h	/^	unsigned char			ucMsgType;$/;"	m	struct:__anon1
+ucNum	CS_EncDec.h	/^	unsigned char			ucNum;$/;"	m	struct:__anon5
+ucNum	CS_EncDec.h	/^	unsigned char			ucNum;$/;"	m	struct:__anon6
 ucPosition	CS_EncDec.h	/^	unsigned char			ucPosition;$/;"	m	struct:__anon3
 ucPosition	CS_EncDec.h	/^	unsigned char			ucPosition;$/;"	m	struct:__anon5
 ucResultCode	CS_EncDec.h	/^	unsigned char			ucResultCode;$/;"	m	struct:__anon9

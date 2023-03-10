@@ -7,8 +7,8 @@ int MENU_Create()
 {
 	int nRC = 0, nPos = 0;
 	
-	char szPosition[5]; //Position을 문자열로 받음
-	char szTitle[5]; //Title을 문자열로 받음
+	char szPosition[30]; //Position을 문자열로 받음
+	char szTitle[30]; //Title을 문자열로 받음
 	CS_CreateReqData_t tCreateReqData; //Client에게 입력받은 데이터
 	unsigned short usBitmask = 0x00; //Client에게 입력받은 데이터 확인용
 	CS_Header_t tReqHeader; //Request 메시지 헤더
@@ -31,7 +31,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(Mandatory) Name", tCreateReqData.szName, sizeof(tCreateReqData.szName) );
+		nRC = UTIL_InputData( "이름", tCreateReqData.szName, sizeof(tCreateReqData.szName) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -41,7 +41,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(Mandatory) Company", tCreateReqData.szCompany, sizeof(tCreateReqData.szCompany) );
+		nRC = UTIL_InputData( "회사명", tCreateReqData.szCompany, sizeof(tCreateReqData.szCompany) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -51,7 +51,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(Mandatory) Team", tCreateReqData.szTeam, sizeof(tCreateReqData.szTeam) );
+		nRC = UTIL_InputData( "부서", tCreateReqData.szTeam, sizeof(tCreateReqData.szTeam) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -61,32 +61,34 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "* 직급은 0x01 ~ 0x0e 값만 입력해주세요\n"
-							  "(Mandatory) Position", szPosition, sizeof(szPosition) );
+		nRC = UTIL_InputData( "* { 사원, 대리, 과장, 차장, 부장, 주임, 선임, 책임, 수석, 이사, 상무 이사, 전무 이사, 사장, 회장 } 중에 입력해주세요\n"
+							  "* 잘 못 입력한 경우 다시 입력 받습니다.\n"
+							  "직급", szPosition, sizeof(szPosition) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 			return CS_rErrClientServerFail;
 		}
-	} while ( CS_EMPTY_INPUT == strlen(szPosition) ||
-			  CS_EMPTY_INPUT == strtol(szPosition, NULL, 0) );
+	} while ( (CS_EMPTY_INPUT == strlen(szPosition)) ||
+			( 0 > UTIL_MappingStrToPosition( szPosition, &(tCreateReqData.ucPosition), sizeof(szPosition) ) ) );
 
-	tCreateReqData.ucPosition = (unsigned char)strtol(szPosition, NULL, 0);
-
-	nRC = UTIL_InputData( "* 직책은 0x01 ~ 0x09 값만 입력해주세요\n"
-						  "(Optional) Title", szTitle, sizeof(szTitle) );
-	if ( CS_rOk != nRC )
-	{
-		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
-		return CS_rErrClientServerFail;
-	}
-
-	tCreateReqData.ucTitle = (unsigned char)strtol(szTitle, NULL, 0);
-	
 	do
 	{
-		nRC = UTIL_InputData( "* 휴대전화 번호는 11자리만 입력해주세요\n"
-							  "(Mandatory) Mobile", tCreateReqData.szMobile, sizeof(tCreateReqData.szMobile) );
+		nRC = UTIL_InputData( "* { 팀원, 파트장, 부서장, 실장, 본부장, 그룹장, 부문장, CTO, CEO } 중에 입력해주세요\n"
+							  "* 입력하지 않으면 다음으로 넘어갑니다.\n"
+							  "* 입력 했지만 잘 못 입력한 경우 다시 입력 받습니다.\n"
+							  "직책", szTitle, sizeof(szTitle) );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
+			return CS_rErrClientServerFail;
+		}
+	} while ( 0 > UTIL_MappingStrToTitle( szTitle, &(tCreateReqData.ucTitle), sizeof(szTitle) ) );
+
+	do
+	{
+		nRC = UTIL_InputData( "* 반드시 11자리로 입력해주세요\n"
+							  "휴대전화 번호", tCreateReqData.szMobile, sizeof(tCreateReqData.szMobile) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -94,7 +96,8 @@ int MENU_Create()
 		}
 	} while ( CS_LEN_MOBILE != strlen(tCreateReqData.szMobile) );
 
-	nRC = UTIL_InputData( "(Optional) Tel", tCreateReqData.szTel, sizeof(tCreateReqData.szTel) );
+	nRC = UTIL_InputData( "* 입력하지 않으면 다음으로 넘어갑니다.\n"
+						  "유선전화 번호", tCreateReqData.szTel, sizeof(tCreateReqData.szTel) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -103,7 +106,7 @@ int MENU_Create()
 
 	do
 	{
-		nRC = UTIL_InputData( "(Mandatory) Email", tCreateReqData.szEmail, sizeof(tCreateReqData.szEmail) );
+		nRC = UTIL_InputData( "이메일", tCreateReqData.szEmail, sizeof(tCreateReqData.szEmail) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -150,33 +153,34 @@ int MENU_Create()
 	}
 
 	encdec_SetBodyLen( ucReqBuf, nPos - CS_RES_HEADER_BUF_LEN );	
-	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
 
 	PRT_TITLE( "Request" )
-	UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
+	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
-	
-#ifdef SIM
-	SIM_Create( ucResHeaderBuf, ucResBodyBuf );
-#endif
 
 #ifdef RUN
-	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) + 1 );
+	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
-		return CS_rErrWriteFail;
+		return nRC;
 	}
+#endif
 
 	/*
 	 *	Response Message for 'Create'
 	 */
 
+#ifdef SIM
+	SIM_Create( ucResHeaderBuf, ucResBodyBuf );
+#endif
+
+#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
-	if ( 0 > nRC )
+	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		return nRC;
 	}
 #endif
 
@@ -189,10 +193,10 @@ int MENU_Create()
 
 #ifdef RUN
 	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
-	if ( 0 > nRC )
+	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		return nRC;
 	}
 #endif
 
@@ -243,7 +247,8 @@ int MENU_Search()
 
 	unsigned char ucResHeaderBuf[CS_RES_HEADER_BUF_LEN]; //Response 메시지 헤더 버퍼
 	CS_Header_t tResHeader; //Response 메시지 헤더 저장할 구조체
-	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN]; //Response 메시지 바디 버퍼
+	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN];//CS_RES_BODY_BUF_LEN]; //Response 메시지 바디 버퍼
+	char *pucNewResBodyBuf = NULL; //응답받은 bodylen이 내가 정한 바디버퍼보다 클 경우 malloc용
 	CS_ResBody_t tResBody; //Response 메시지 바디 저장할 구조체
 
 	memset( szCardId, 0x00, sizeof(szCardId) );
@@ -255,33 +260,35 @@ int MENU_Search()
 	memset( ucResBodyBuf, 0x00, sizeof(ucResBodyBuf) );
 	memset( &tResBody, 0x00, sizeof(tResBody) );
 
-	nRC = UTIL_InputData( "(Optional) Name", tSearchReqData.szName, sizeof(tSearchReqData.szName) );
+	nRC = UTIL_InputData( "* 모두 입력 안 된 경우, 모든 명함 정보를 조회합니다.\n"
+						  "이름", tSearchReqData.szName, sizeof(tSearchReqData.szName) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 		return CS_rErrClientServerFail;
 	}
 
-	nRC = UTIL_InputData( "(Optional) Company", tSearchReqData.szCompany, sizeof(tSearchReqData.szCompany) );
+	nRC = UTIL_InputData( "회사명", tSearchReqData.szCompany, sizeof(tSearchReqData.szCompany) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 		return CS_rErrClientServerFail;
 	}
 
-	nRC = UTIL_InputData( "* Card Id는 올바른 형식으로 입력하지 않으면 0으로 설정. 입력 안 한 것과 동일함\n"
-						  "(Optional) Card Id", szCardId, sizeof(szCardId) );
-	if ( CS_rOk != nRC )
+	do
 	{
-		LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
-		return CS_rErrClientServerFail;
-	}
+		nRC = UTIL_InputData( "* 문자가 포함되면 다시 입력 받습니다. 범위(0~4,294,967,295) \n" 
+							  "명함 ID", szCardId, sizeof(szCardId) );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
+			return CS_rErrClientServerFail;
+		}
+	} while ( 0 > UTIL_ValidInputCardId( szCardId, &(tSearchReqData.unCardId) ) );
 
-	STR_TO_INT( szCardId, tSearchReqData.unCardId );
-	
-	printf( "\n%s / %s / %d\n",
-			tSearchReqData.szName, tSearchReqData.szCompany,
-			tSearchReqData.unCardId );
+	tSearchReqData.unCardId = atoi(szCardId);
+
+	printf( "\n%s / %s / %d\n", tSearchReqData.szName, tSearchReqData.szCompany, tSearchReqData.unCardId );
 
 	CS_SET_MASK_SEARCH_DELETE_REQ( &usBitmask, tSearchReqData ); //FULL INPUT : 0000 0000 0011 1000
 
@@ -316,33 +323,35 @@ int MENU_Search()
 	}
 
 	encdec_SetBodyLen( ucReqBuf, nPos - CS_RES_HEADER_BUF_LEN );	
-	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
-
-	PRT_TITLE( "Request" )
-	UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
-	PRT_LF;
 	
-#ifdef SIM
-	SIM_Search( ucResHeaderBuf, ucResBodyBuf );
-#endif
+	PRT_TITLE( "Request" )
+	UTIL_PrtBuf( ucReqBuf, nPos );
+	PRT_LF;
 
 #ifdef RUN
-	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) + 1 );
+	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
-		return CS_rErrWriteFail;
+		return nRC;
 	}
+#endif
 
 	/*
 	 *	Response Message for 'Search'
 	 */
 
+#ifdef SIM
+	SIM_Search( ucResHeaderBuf, ucResBodyBuf );
+	//SIM_Search( ucResHeaderBuf, pucNewResBodyBuf ); //사용하려면 pucNewResBodyBuf malloc 해야함	
+#endif
+
+#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
-	if ( 0 > nRC )
+	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		return nRC;
 	}
 #endif
 
@@ -354,25 +363,56 @@ int MENU_Search()
 	}
 
 #ifdef RUN
-	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
-	if ( 0 > nRC )
+	if ( tResHeader.unBodyLen > CS_RES_BODY_BUF_LEN )
 	{
-		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		pucNewResBodyBuf = (char *)malloc( sizeof(char *) * tResHeader.unBodyLen );
+		if ( NULL == pucNewResBodyBuf )
+		{
+			fprintf( stderr, "malloc fail <%d:%s>", errno, strerror(errno) );
+			return CS_rErrMallocFail;
+		}
+
+		nRC = SOCK_Read( pucNewResBodyBuf, tResHeader.unBodyLen );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
+			goto exit_failure;
+
+		PRT_TITLE( "Response" );
+		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
+		UTIL_PrtBuf( pucNewResBodyBuf, tResHeader.unBodyLen );
+
+		nRC = ENCDEC_DecodingBody( pucNewResBodyBuf, tResHeader, &tResBody );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
+			goto exit_failure;
+		}
 	}
+	else
+	{
+		nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
+			return nRC;
+		}
 #endif
 
-	PRT_TITLE( "Response" );
-	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
-	UTIL_PrtBuf( ucResBodyBuf, tResHeader.unBodyLen );
+		PRT_TITLE( "Response" );
+		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
+		UTIL_PrtBuf( ucResBodyBuf, tResHeader.unBodyLen );
 
-	nRC = ENCDEC_DecodingBody( ucResBodyBuf, tResHeader, &tResBody );
-	if ( CS_rOk != nRC )
-	{
-		LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
-		return nRC;
+		nRC = ENCDEC_DecodingBody( ucResBodyBuf, tResHeader, &tResBody );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
+			return nRC;
+		}
+#ifdef RUN
 	}
-	
+#endif	
+
 	switch ( tResBody.ucResultCode )
 	{
 		case CS_RC_SUCCESS:
@@ -381,25 +421,34 @@ int MENU_Search()
 
 			for ( nIndex = 0; nIndex < tResBody.u.tSearchResData.usTotalCnt; nIndex++ )
 			{
-				PRT_DETAIL_INFO( tResBody.u.tSearchResData.tDetailInfo[nIndex] );
+				PRT_DETAIL_INFO( tResBody.u.tSearchResData.tDetailInfo[nIndex],
+						UTIL_MappingPositionToStr(tResBody.u.tSearchResData.tDetailInfo[nIndex].ucPosition),
+						UTIL_MappingTitleToStr(tResBody.u.tSearchResData.tDetailInfo[nIndex].ucTitle) );
 			}
 		}
 			break;
 		case CS_RC_FAIL:
 		{
 			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
-			return CS_rErrFromServer;
+			nRC = CS_rErrFromServer;
+			goto exit_failure;
 		}
 			break;
 		default:
 		{
 			LOG_ERR_F( "wrong result code (%02x)", tResBody.ucResultCode );
-			return CS_rErrSystemFail;
+			nRC = CS_rErrSystemFail;
+			goto exit_failure;
 		}
 			break;
 	}
-	
+
+	FREE( pucNewResBodyBuf );
 	return CS_rOk;
+
+exit_failure:
+	FREE( pucNewResBodyBuf );
+	return nRC;
 }
 
 int MENU_Delete()
@@ -415,6 +464,7 @@ int MENU_Delete()
 	unsigned char ucResHeaderBuf[CS_RES_HEADER_BUF_LEN]; //Response 메시지 헤더 버퍼
 	CS_Header_t tResHeader; //Response 메시지 헤더 저장할 구조체
 	unsigned char ucResBodyBuf[CS_RES_BODY_BUF_LEN]; //Response 메시지 바디 버퍼
+	char *pucNewResBodyBuf = NULL; //응답받은 bodylen이 내가 정한 바디버퍼보다 클 경우 malloc용
 	CS_ResBody_t tResBody; //Response 메시지 바디 저장할 구조체
 
 	memset( szCardId, 0x00, sizeof(szCardId) );
@@ -430,36 +480,39 @@ int MENU_Delete()
 	{
 		usBitmask = 0x00;
 
-		nRC = UTIL_InputData( "* 이름, 회사명, 명함 ID 중 한 개는 반드시 포함되어야 함\n"
-							  "(Conditional) Name", tDeleteReqData.szName, sizeof(tDeleteReqData.szName) );
+		nRC = UTIL_InputData( "* 이름, 회사명, 명함 ID 중 한 개는 반드시 포함되어야 합니다.\n"
+							  "이름", tDeleteReqData.szName, sizeof(tDeleteReqData.szName) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 			return CS_rErrClientServerFail;
 		}
 
-		nRC = UTIL_InputData( "(Conditional) Company", tDeleteReqData.szCompany, sizeof(tDeleteReqData.szCompany) );
+		nRC = UTIL_InputData( "회사", tDeleteReqData.szCompany, sizeof(tDeleteReqData.szCompany) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
 			return CS_rErrClientServerFail;
 		}
-	
-		nRC = UTIL_InputData( "* Card Id는 올바른 형식으로 입력하지 않으면 0으로 설정. 입력 안 한 것과 동일함\n"
-						  "(Conditional) Card Id", szCardId, sizeof(szCardId) );
-		if ( CS_rOk != nRC )
+
+		do
 		{
-			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
-			return CS_rErrClientServerFail;
-		}
-		STR_TO_INT( szCardId, tDeleteReqData.unCardId );
-		
+			nRC = UTIL_InputData( "* 문자가 포함되면 다시 입력 받습니다. 범위(0~4,294,967,295)\n"
+								  "명함 ID", szCardId, sizeof(szCardId) );
+			if ( CS_rOk != nRC )
+			{
+				LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
+				return CS_rErrClientServerFail;
+			}
+		} while ( 0 > UTIL_ValidInputCardId( szCardId, &(tDeleteReqData.unCardId) ) );
+
+		tDeleteReqData.unCardId = atoi(szCardId);
+
 		CS_SET_MASK_SEARCH_DELETE_REQ( &usBitmask, tDeleteReqData ); //FULL INPUT : 0000 0000 0011 1000
 
 	} while ( 0 == (0x00 | usBitmask) );
 	
-	printf( "\n%s / %s / %d\n",
-			tDeleteReqData.szName, tDeleteReqData.szCompany, tDeleteReqData.unCardId );
+	printf( "\n%s / %s / %d\n", tDeleteReqData.szName, tDeleteReqData.szCompany, tDeleteReqData.unCardId );
 
 	/*
 	 *	Request Message for 'Delete'
@@ -492,33 +545,35 @@ int MENU_Delete()
 	}
 
 	encdec_SetBodyLen( ucReqBuf, nPos - CS_RES_HEADER_BUF_LEN );	
-	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
 
 	PRT_TITLE( "Request" )
-	UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
+	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
-	
-#ifdef SIM
-	SIM_Delete( ucResHeaderBuf, ucResBodyBuf );
-#endif
 
 #ifdef RUN
-	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) + 1 );
+	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
-		return CS_rErrWriteFail;
+		return nRC;
 	}
+#endif
 
 	/*
 	 *	Response Message for 'Delete'
 	 */
 
+#ifdef SIM
+	SIM_Delete( ucResHeaderBuf, ucResBodyBuf );
+	//SIM_Delete( ucResHeaderBuf, pucNewResBodyBuf ); //사용하려면 pucNewResBodyBuf malloc 해야함
+#endif
+
+#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
-	if ( 0 > nRC )
+	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		return nRC;
 	}
 #endif
 
@@ -529,26 +584,57 @@ int MENU_Delete()
 		return nRC;
 	}
 
-#ifdef RUN
-	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
-	if ( 0 > nRC )
+#ifdef RUN //TODO
+	if ( tResHeader.unBodyLen >  CS_RES_BODY_BUF_LEN )
 	{
-		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		pucNewResBodyBuf = (char *)malloc( sizeof(char *) * tResHeader.unBodyLen );
+		if ( NULL == pucNewResBodyBuf )
+		{
+			fprintf( stderr, "malloc fail <%d:%s>", errno, strerror(errno) );
+			return CS_rErrMallocFail;
+		}
+
+		nRC = SOCK_Read( pucNewResBodyBuf, tResHeader.unBodyLen );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
+			goto exit_failure;
+
+		PRT_TITLE( "Response" );
+		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
+		UTIL_PrtBuf( pucNewResBodyBuf, tResHeader.unBodyLen );
+
+		nRC = ENCDEC_DecodingBody( pucNewResBodyBuf, tResHeader, &tResBody );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
+			goto exit_failure;
+		}
+	}
+	else
+	{
+		nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
+			return nRC;
+		}
+#endif
+
+		PRT_TITLE( "Response" );
+		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
+		UTIL_PrtBuf( ucResBodyBuf, tResHeader.unBodyLen );
+
+		nRC = ENCDEC_DecodingBody( ucResBodyBuf, tResHeader, &tResBody );
+		if ( CS_rOk != nRC )
+		{
+			LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
+			return nRC;
+		}
+#ifdef RUN
 	}
 #endif
 
-	PRT_TITLE( "Response" );
-	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
-	UTIL_PrtBuf( ucResBodyBuf, tResHeader.unBodyLen );
-
-	nRC = ENCDEC_DecodingBody( ucResBodyBuf, tResHeader, &tResBody );
-	if ( CS_rOk != nRC )
-	{
-		LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
-		return nRC;
-	}
-	
 	switch ( tResBody.ucResultCode )
 	{
 		case CS_RC_SUCCESS:
@@ -564,18 +650,24 @@ int MENU_Delete()
 		case CS_RC_FAIL:
 		{
 			printf( "\nError Code = %02x\n", tResBody.u.ucErrCode );
-			return CS_rErrFromServer;
+			nRC = CS_rErrFromServer;
+			goto exit_failure;
 		}
 			break;
 		default:
 		{
 			LOG_ERR_F( "wrong result code (%02x)", tResBody.ucResultCode );
-			return CS_rErrSystemFail;
+			nRC = CS_rErrSystemFail;
+			goto exit_failure;
 		}
-			break;
 	}
 
+	FREE( pucNewResBodyBuf );
 	return CS_rOk;
+
+exit_failure:
+	FREE( pucNewResBodyBuf );
+	return nRC;
 }
 
 int MENU_Logout()
@@ -628,33 +720,34 @@ int MENU_Logout()
 	}
 
 	encdec_SetBodyLen( ucReqBuf, nPos - CS_RES_HEADER_BUF_LEN );	
-	ucReqBuf[ strlen(ucReqBuf) ] = '\0';
 
-	PRT_TITLE( "Request" )
-		UTIL_PrtBuf( ucReqBuf, CS_REQ_BUF_LEN );
+	PRT_TITLE( "Request" );
+	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
+
+#ifdef RUN
+	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
+	if ( CS_rOk != nRC )
+	{
+		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
+		return nRC;
+	}
+#endif
+
+	/*
+	 *	Response Message for 'Logout'
+	 */
 
 #ifdef SIM
 	SIM_Logout( ucResHeaderBuf, ucResBodyBuf );
 #endif
 
 #ifdef RUN
-	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) + 1 );
+	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( CS_rOk != nRC )
 	{
-		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
-		return CS_rErrWriteFail;
-	}
-
-	/*
-	 *	Response Message for 'Logout'
-	 */
-
-	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
-	if ( 0 > nRC )
-	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		return nRC;
 	}
 #endif
 
@@ -667,10 +760,10 @@ int MENU_Logout()
 
 #ifdef RUN
 	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
-	if ( 0 > nRC )
+	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
-		return CS_rErrReadFail;
+		return nRC;
 	}
 #endif
 

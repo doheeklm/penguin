@@ -361,7 +361,7 @@ void encdec_SetBodyLen( unsigned char *pucBuf, unsigned int unLen )
 {
 	CS_Header_t *ptTemp;
 	ptTemp = (CS_Header_t *)pucBuf;
-	ptTemp->unBodyLen = ntohl(unLen);
+	ptTemp->unBodyLen = htonl(unLen);
 }
 
 int ENCDEC_EncodingTLVString( unsigned char *pucBuf, int nBufLen, unsigned char ucTag, unsigned short usLength, char *pszValue, char cFillChar )
@@ -1027,7 +1027,7 @@ int ENCDEC_DecodingSearchBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 
 			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
 
-			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].ucCnt) );
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tSearchResData.tDetailInfo[nCnt].ucNum) );
 			if ( 0 > nRC )
 			{
 				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
@@ -1394,7 +1394,7 @@ int ENCDEC_DecodingDeleteBody( unsigned char *pucBuf, int nBufLen, CS_ResBody_t 
 
 			CHECK_TLV_LENGTH( CS_LEN_CNT, usLength );
 
-			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].ucCnt) );
+			nRC = encdec_DecodingOneByte( &pucBuf[nPos], &(ptResBody->u.tDeleteResData.tSimpleInfo[nCnt].ucNum) );
 			if ( 0 > nRC )
 			{
 				LOG_ERR_F( "encdec_DecodingOneByte fail <%d>", nRC );
@@ -1622,6 +1622,11 @@ int encdec_DecodingString( unsigned char *pucBuf, char *pszData, int nStrMaxLen 
 
 	for ( i = 0; i < nStrMaxLen; i++ )
 	{
+		if ( CS_ASTERISK == pucBuf[i] )
+		{
+			return nStrMaxLen;
+		}
+
 		pszData[i] = pucBuf[i];
 	}
 

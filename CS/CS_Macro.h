@@ -5,6 +5,18 @@
 #define F_FORMAT( _fmt )		"\n[%s: %d][%s] "_fmt"\n", __FILE__, __LINE__, __func__
 #define LOG_ERR_F( _fmt, ... )	printf( F_FORMAT( _fmt ), ##__VA_ARGS__ );
 
+#define CASE_RETURN( _c, _ret )	case ( _c ): return _ret
+#define CASE_DEFAULT_UNKNOWN	default: return "x"
+
+#define FREE( _p ) \
+	do { \
+		if ( NULL != _p ) \
+		{ \
+			printf( "\n====FREE====\n" ); \
+			free( _p ); \
+		} \
+	} while ( 0 )
+
 #define CHECK_TLV_LENGTH( _spec, _res_len ) \
 	do { \
 		if ( _spec != _res_len ) \
@@ -60,21 +72,22 @@
 									"로그인 정보를 다시 입력해주세요.\n" );
 #define PRT_SYS_FAIL		printf( "\n서버 오류를 감지했습니다.\n" \
 									"프로그램을 종료합니다.\n\n" ); 
-#define PRT_DETAIL_INFO( _i ) \
+
+#define PRT_DETAIL_INFO( _i, _pos, _title ) \
 	do { \
 		printf( "\n[ 명함 %02x ]\n" \
 				"명함 ID : %d\n" \
 				"이름 : %s\n" \
 				"회사명 : %s\n" \
 				"부서 : %s\n" \
-				"직위 : %02x\n" \
-				"직책 : %02x\n" \
-				"휴대전화 : %s\n" \
-				"유선전화 : %s\n" \
+				"직급 : %s\n" \
+				"직책 : %s\n" \
+				"휴대전화 번호 : %s\n" \
+				"유선전화 번호 : %s\n" \
 				"이메일 : %s\n", \
-				(_i).ucCnt, (_i).unCardId, (_i).szName, \
-				(_i).szCompany, (_i).szTeam, (_i).ucPosition, \
-				(_i).ucTitle, (_i).szMobile, (_i).szTel, (_i).szEmail ); \
+				(_i).ucNum, (_i).unCardId, (_i).szName, \
+				(_i).szCompany, (_i).szTeam, _pos, \
+				_title, (_i).szMobile, (_i).szTel, (_i).szEmail ); \
 		} while ( 0 );
 
 #define PRT_SIMPLE_INFO( _i ) \
@@ -83,24 +96,9 @@
 				"명함 ID : %d\n" \
 				"이름 : %s\n" \
 				"회사명 : %s\n" \
-				"휴대전화 : %s\n", \
-				(_i).ucCnt, (_i).unCardId, (_i).szName, \
+				"휴대전화 번호 : %s\n", \
+				(_i).ucNum, (_i).unCardId, (_i).szName, \
 				(_i).szCompany, (_i).szMobile ); \
 		} while ( 0 );
-
-#define STR_TO_INT( _a, _b ) \
-	do { \
-		if ( CS_EMPTY_INPUT != strlen(_a) ) \
-		{ \
-			if ( 0 == (int)strtol(_a, NULL, 0) ) \
-			{ \
-				_b = 0; \
-			} \
-			else \
-			{ \
-				_b = (unsigned int)strtol(_a, NULL, 0); \
-			} \
-		} \
-	} while ( 0 );
 
 #endif /* _CS_MACRO_H_ */

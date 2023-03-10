@@ -98,8 +98,6 @@ void SIM_Login( unsigned char *pucHeader, unsigned char *pucBody )
 		nRC = ENCDEC_EncodingTLVOneByte( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, CS_TAG_ERR_CODE, CS_LEN_ERR_CODE, CS_EC_UNDEFINED_ERR );
 		nPos += nRC;
 	}
-	
-	b[nPos] = '\0';
 
 	a[0] = CS_MSG_LOGIN_RES;
 	SIM_SetBodyLen( &a[1], nPos );
@@ -130,8 +128,6 @@ void SIM_Create( unsigned char *pucHeader, unsigned char *pucBody )
 		nPos += nRC;
 	}
 	
-	b[nPos] = '\0';
-	
 	a[0] = CS_MSG_CREATE_RES;
 	SIM_SetBodyLen( &a[1], nPos );
 }
@@ -147,7 +143,7 @@ void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
 	int nRC = 0, nPos = 0;
 	unsigned char Result = CS_RC_SUCCESS;
 
-	char name[CS_LEN_NAME + 1] = "dodo";
+	char name[CS_LEN_NAME + 1] = "do do";
 	char company[CS_LEN_COMPANY + 1] = "tel";
 	char team[CS_LEN_TEAM + 1] = "core";
 	char mobile[CS_LEN_MOBILE + 1] = "01077779999";
@@ -155,7 +151,7 @@ void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
 	char email[CS_LEN_EMAIL + 1] = "deoewj@email.com";
 
 	char name1[CS_LEN_NAME + 1] = "hee";
-	char company1[CS_LEN_COMPANY + 1] = "google";
+	char company1[CS_LEN_COMPANY + 1] = "goo gle";
 	char team1[CS_LEN_TEAM + 1] = "data";
 	char mobile1[CS_LEN_MOBILE + 1] = "01089219321";
 	char tel1[CS_LEN_TEL + 1] = "0315851111";
@@ -183,8 +179,6 @@ void SIM_Search( unsigned char *pucHeader, unsigned char *pucBody )
 		nRC = ENCDEC_EncodingTLVOneByte( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, CS_TAG_ERR_CODE, CS_LEN_ERR_CODE, CS_EC_UNDEFINED_ERR );
 		nPos += nRC;
 	}
-	
-	b[nPos] = '\0';
 
 	a[0] = CS_MSG_SEARCH_RES;
 	SIM_SetBodyLen( &a[1], nPos );
@@ -228,8 +222,6 @@ void SIM_Delete( unsigned char *pucHeader, unsigned char *pucBody )
 		nRC = ENCDEC_EncodingTLVOneByte( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, CS_TAG_ERR_CODE, CS_LEN_ERR_CODE, CS_EC_UNDEFINED_ERR );
 		nPos += nRC;
 	}
-	
-	b[nPos] = '\0';
 
 	a[0] = CS_MSG_DELETE_RES;
 	SIM_SetBodyLen( &a[1], nPos );
@@ -260,8 +252,6 @@ void SIM_Logout( unsigned char *pucHeader, unsigned char *pucBody )
 		nRC = ENCDEC_EncodingTLVOneByte( &b[nPos], CS_RES_BODY_BUF_LEN - nPos, CS_TAG_ERR_CODE, CS_LEN_ERR_CODE, CS_EC_UNDEFINED_ERR );
 		nPos += nRC;
 	}
-
-	b[nPos] = '\0';
 
 	a[0] = CS_MSG_LOGOUT_RES;
 	SIM_SetBodyLen( &a[1], nPos );
