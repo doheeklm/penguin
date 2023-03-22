@@ -91,31 +91,26 @@ int TASK_Login()
 	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
 
-#ifdef RUN
 	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
 		return CS_rErrWriteFail;
 	}
-#endif
 
 	/*
 	 *	Response Message for 'Login'
 	 */
 
-#ifdef SIM
-	SIM_Login( ucResHeaderBuf, ucResBodyBuf );
-#endif
+	//NOTE
+	//SIM_Login( ucResHeaderBuf, ucResBodyBuf );
 
-#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( 0 > nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return CS_rErrReadFail;
 	}
-#endif
 
 	nRC = ENCDEC_DecodingHeader( ucResHeaderBuf, &tResHeader );
 	if ( CS_rOk != nRC )
@@ -124,14 +119,12 @@ int TASK_Login()
 		return nRC;
 	}
 
-#ifdef RUN
 	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
 	if ( 0 > nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return CS_rErrReadFail;
 	}
-#endif
 
 	PRT_TITLE( "Response" );
 	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );

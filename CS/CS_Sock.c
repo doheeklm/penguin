@@ -71,7 +71,8 @@ int SOCK_Write( unsigned char *pucBuf, int nBufLen )
 			{
 				//NOTE siganl이 interrupt한 경우에 요청한 byte를 다 쓰기 전에 return 될 수 있음
 				//따라서 호출한 시스템 콜(write)을 errno가 EINTR이 아닐 때까지 다시 호출해야함
-				continue;
+				
+				return CS_rErrWriteFail;
 			}
 
 			fprintf( stderr, "%s:: write fail <%d:%s>\n", __func__, errno, strerror(errno) );
@@ -106,7 +107,7 @@ int SOCK_Read( unsigned char *pucBuf, int nBufLen )
 		//NOTE blocking mode 소켓은 데이터가 올 때까지 무한 대기함
 		//데이터가 언제 올지 모르기 때문에 fd에 데이터가 있는지 확인하기 위해 select를 사용함
 		//60초 기다리고 데이터가 없으면 에러 리턴
-#ifdef RUN
+		
 		nRC = select( g_tEnv.nClientFd, &(g_tEnv.tReadFdSet), NULL, NULL, &(g_tEnv.tTime) );
 		if ( 0 > nRC )
 		{
@@ -118,7 +119,6 @@ int SOCK_Read( unsigned char *pucBuf, int nBufLen )
 			printf( "%ld 초가 경과되었습니다. fd에 변화가 없습니다.\n", g_tEnv.tTime.tv_sec );
 			return CS_rErrTimeout;
 		}
-#endif
 
 		//TODO nonblocking mode 일 때는 어떻게 할지?
 		//=> poll/select

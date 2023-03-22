@@ -63,7 +63,7 @@ int MENU_Create()
 	{
 		nRC = UTIL_InputData( "* { 사원, 대리, 과장, 차장, 부장, 주임, 선임, 책임, 수석, 이사, 상무 이사, 전무 이사, 사장, 회장 } 중에 입력해주세요\n"
 							  "* 잘 못 입력한 경우 다시 입력 받습니다.\n"
-							  "직급", szPosition, sizeof(szPosition) );
+							  "직위", szPosition, sizeof(szPosition) );
 		if ( CS_rOk != nRC )
 		{
 			LOG_ERR_F( "UTIL_InputData fail <%d>", nRC );
@@ -122,10 +122,6 @@ int MENU_Create()
 
 	CS_SET_MASK_CREATE_REQ( &usBitmask, tCreateReqData ); //FULL INPUT : 0000 1111 1111 0000
 
-	/*
-	 *	Request Message for 'Create'
-	 */
-
 	tReqHeader.ucMsgType = CS_MSG_CREATE_REQ;
 
 	nRC = ENCDEC_EncodingHeader( ucReqBuf, sizeof(ucReqBuf), &tReqHeader );
@@ -158,31 +154,21 @@ int MENU_Create()
 	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
 
-#ifdef RUN
 	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
-	/*
-	 *	Response Message for 'Create'
-	 */
+	//SIM_Create( ucResHeaderBuf, ucResBodyBuf );
 
-#ifdef SIM
-	SIM_Create( ucResHeaderBuf, ucResBodyBuf );
-#endif
-
-#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
 	nRC = ENCDEC_DecodingHeader( ucResHeaderBuf, &tResHeader );
 	if ( CS_rOk != nRC )
@@ -191,14 +177,12 @@ int MENU_Create()
 		return nRC;
 	}
 
-#ifdef RUN
 	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
 	PRT_TITLE( "Response" );
 	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
@@ -292,10 +276,6 @@ int MENU_Search()
 
 	CS_SET_MASK_SEARCH_DELETE_REQ( &usBitmask, tSearchReqData ); //FULL INPUT : 0000 0000 0011 1000
 
-	/*
-	 *	Request Message for 'Search'
-	 */
-
 	tReqHeader.ucMsgType = CS_MSG_SEARCH_REQ;
 
 	nRC = ENCDEC_EncodingHeader( ucReqBuf, sizeof(ucReqBuf), &tReqHeader );
@@ -328,32 +308,22 @@ int MENU_Search()
 	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
 
-#ifdef RUN
 	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
 		return nRC;
 	}
-#endif
-
-	/*
-	 *	Response Message for 'Search'
-	 */
-
-#ifdef SIM
-	SIM_Search( ucResHeaderBuf, ucResBodyBuf );
+	
+	//SIM_Search( ucResHeaderBuf, ucResBodyBuf );
 	//SIM_Search( ucResHeaderBuf, pucNewResBodyBuf ); //사용하려면 pucNewResBodyBuf malloc 해야함	
-#endif
 
-#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
 	nRC = ENCDEC_DecodingHeader( ucResHeaderBuf, &tResHeader );
 	if ( CS_rOk != nRC )
@@ -362,7 +332,6 @@ int MENU_Search()
 		return nRC;
 	}
 
-#ifdef RUN
 	if ( tResHeader.unBodyLen > CS_RES_BODY_BUF_LEN )
 	{
 		pucNewResBodyBuf = (char *)malloc( sizeof(char *) * tResHeader.unBodyLen );
@@ -377,6 +346,7 @@ int MENU_Search()
 		{
 			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 			goto exit_failure;
+		}
 
 		PRT_TITLE( "Response" );
 		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
@@ -397,7 +367,6 @@ int MENU_Search()
 			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 			return nRC;
 		}
-#endif
 
 		PRT_TITLE( "Response" );
 		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
@@ -409,9 +378,7 @@ int MENU_Search()
 			LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
 			return nRC;
 		}
-#ifdef RUN
 	}
-#endif	
 
 	switch ( tResBody.ucResultCode )
 	{
@@ -514,10 +481,6 @@ int MENU_Delete()
 	
 	printf( "\n%s / %s / %d\n", tDeleteReqData.szName, tDeleteReqData.szCompany, tDeleteReqData.unCardId );
 
-	/*
-	 *	Request Message for 'Delete'
-	 */
-
 	tReqHeader.ucMsgType = CS_MSG_DELETE_REQ;
 
 	nRC = ENCDEC_EncodingHeader( ucReqBuf, sizeof(ucReqBuf), &tReqHeader );
@@ -550,32 +513,22 @@ int MENU_Delete()
 	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
 
-#ifdef RUN
 	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
-	/*
-	 *	Response Message for 'Delete'
-	 */
-
-#ifdef SIM
-	SIM_Delete( ucResHeaderBuf, ucResBodyBuf );
+	//SIM_Delete( ucResHeaderBuf, ucResBodyBuf );
 	//SIM_Delete( ucResHeaderBuf, pucNewResBodyBuf ); //사용하려면 pucNewResBodyBuf malloc 해야함
-#endif
 
-#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
 	nRC = ENCDEC_DecodingHeader( ucResHeaderBuf, &tResHeader );
 	if ( CS_rOk != nRC )
@@ -584,7 +537,6 @@ int MENU_Delete()
 		return nRC;
 	}
 
-#ifdef RUN //TODO
 	if ( tResHeader.unBodyLen >  CS_RES_BODY_BUF_LEN )
 	{
 		pucNewResBodyBuf = (char *)malloc( sizeof(char *) * tResHeader.unBodyLen );
@@ -599,6 +551,7 @@ int MENU_Delete()
 		{
 			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 			goto exit_failure;
+		}
 
 		PRT_TITLE( "Response" );
 		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
@@ -619,7 +572,6 @@ int MENU_Delete()
 			LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 			return nRC;
 		}
-#endif
 
 		PRT_TITLE( "Response" );
 		UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
@@ -631,9 +583,7 @@ int MENU_Delete()
 			LOG_ERR_F( "ENCDEC_DecodingBody fail <%d>", nRC );
 			return nRC;
 		}
-#ifdef RUN
 	}
-#endif
 
 	switch ( tResBody.ucResultCode )
 	{
@@ -689,10 +639,6 @@ int MENU_Logout()
 	memset( ucResBodyBuf, 0x00, sizeof(ucResBodyBuf) );
 	memset( &tResBody, 0x00, sizeof(tResBody) );
 
-	/*
-	 *	Request Message for 'Logout'
-	 */
-
 	tReqHeader.ucMsgType = CS_MSG_LOGOUT_REQ;
 
 	nRC = ENCDEC_EncodingHeader( ucReqBuf, sizeof(ucReqBuf), &tReqHeader );
@@ -725,31 +671,21 @@ int MENU_Logout()
 	UTIL_PrtBuf( ucReqBuf, nPos );
 	PRT_LF;
 
-#ifdef RUN
 	nRC = SOCK_Write( ucReqBuf, strlen(ucReqBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F( "SOCK_Write fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
-	/*
-	 *	Response Message for 'Logout'
-	 */
+	//SIM_Logout( ucResHeaderBuf, ucResBodyBuf );
 
-#ifdef SIM
-	SIM_Logout( ucResHeaderBuf, ucResBodyBuf );
-#endif
-
-#ifdef RUN
 	nRC = SOCK_Read( ucResHeaderBuf, sizeof(ucResHeaderBuf) );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
 	nRC = ENCDEC_DecodingHeader( ucResHeaderBuf, &tResHeader );
 	if ( CS_rOk != nRC )
@@ -758,14 +694,12 @@ int MENU_Logout()
 		return nRC;
 	}
 
-#ifdef RUN
 	nRC = SOCK_Read( ucResBodyBuf, tResHeader.unBodyLen );
 	if ( CS_rOk != nRC )
 	{
 		LOG_ERR_F ( "SOCK_Read fail <%d>", nRC );
 		return nRC;
 	}
-#endif
 
 	PRT_TITLE( "Response" );
 	UTIL_PrtBuf( ucResHeaderBuf, sizeof(ucResHeaderBuf) );

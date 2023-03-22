@@ -24,7 +24,6 @@ int main( int argc, char **argv )
 	signal( SIGKILL, SignalHandler );
 	signal( SIGPIPE, SIG_IGN );
 
-#ifdef RUN
 	nRC = SOCK_Init();
 	if ( CS_rOk != nRC )
 	{
@@ -42,27 +41,26 @@ int main( int argc, char **argv )
 		LOG_ERR_F( "SOCK_SetFd fail <%d>", nRC );
 		goto exit_main;
 	}
-#endif
 
 	while( g_nRunFlag )
 	{
 		nRC = TASK_Login();
 		if ( CS_rOk != nRC )
 		{
-			if ( CS_rErrLoginFail == nRC ) //서버로부터 로그인 실패를 응답 받을 경우
+			if ( CS_rErrLoginFail == nRC )
 			{
 				nLoginFailCnt++;
 				PRT_TITLE( "System" );
 				PRT_ERR_CNT( nLoginFailCnt );
 
-				if ( nLoginFailCnt >= 3 ) //재시도 횟수 3번을 넘어가는 경우 프로그램 종료
+				if ( nLoginFailCnt >= 3 )
 				{
 					PRT_EXIT;
 					goto exit_main;
 				}
 				else
 				{
-					PRT_RETRY; //로그인 재시도
+					PRT_RETRY;
 					continue;
 				}
 			}
@@ -78,7 +76,7 @@ int main( int argc, char **argv )
 		}
 	
 		nRC = TASK_Menu();
-		if ( CS_rBackToLogin == nRC ) //로그아웃 성공 
+		if ( CS_rBackToLogin == nRC )
 		{
 			continue;
 		}
