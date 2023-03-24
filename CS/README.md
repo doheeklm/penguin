@@ -1,1 +1,1 @@
-내맘대로 Business Card Project
+신입 프로젝트 Client-Server 구현
